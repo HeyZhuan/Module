@@ -1,0 +1,172 @@
+package xinxing.boss.supplier.supplierapi.phonetraffic.others.templete.service;
+
+import java.io.PrintWriter;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import xinxing.boss.supplier.api.domain.SupplierCallbackRequest;
+import xinxing.boss.supplier.api.domain.SupplierChargeRequest;
+import xinxing.boss.supplier.api.domain.SupplierQueryRequest;
+import xinxing.boss.supplier.common.http.HttpUtils;
+import xinxing.boss.supplier.common.json.JsonUtils;
+import xinxing.boss.supplier.common.reflect.ReflectUtil;
+import xinxing.boss.supplier.common.resource.Constants;
+import xinxing.boss.supplier.supplierapi.domain.BizDomain;
+import xinxing.boss.supplier.supplierapi.domain.BizResponse;
+import xinxing.boss.supplier.supplierapi.domain.CallbackStatus;
+import xinxing.boss.supplier.supplierapi.domain.CallbackType;
+import xinxing.boss.supplier.supplierapi.domain.CommonMsg;
+import xinxing.boss.supplier.supplierapi.phonetraffic.others.templete.util.Templete_Util;
+import xinxing.boss.supplier.supplierapi.util.CommonLogUtil;
+import xinxing.boss.supplier.supplierapi.util.CustomerV100Util;
+import xinxing.boss.supplier.supplierapi.util.ReqRspLogUtil;
+
+public class Templete_ServiceImpl implements Templete_Service {
+	public static Boolean isPlatOrderId = true;//判断  供货商订单号是否为我们的订单号
+
+	private static final Logger log = Logger.getLogger(Templete_ServiceImpl.class);
+
+	@Override
+	public BizResponse handleBizReq(SupplierChargeRequest scr) {
+		String order_head = scr.getHeadName();
+		BizResponse br = null;
+		String order_orderId = scr.getPlatformTransId();// 请求订单信息
+		String supplierOrderId = (isPlatOrderId ? scr.getPlatformTransId() : null);
+		BizDomain bizDomain = new BizDomain(order_orderId, supplierOrderId, false);
+		String sendUrl = Constants.getString(order_head + "templete_sendUrl").trim();
+		try {
+			String sendReq = Templete_Util.buildSendReq(scr);
+			ReqRspLogUtil.reqOrderLog(log, order_orderId, JsonUtils.obj2Json(sendReq));
+			String sendRes = HttpUtils.sendPostWithResEncode(sendUrl, sendReq, "application/x-www-form-urlencoded", "UTF-8");
+			//String sendRes = HttpUtils.sendPost(sendUrl, queryReq, "application/json");
+			//String queryRes = HttpUtils.sendGet(sendUrl, "UTF-8");
+			ReqRspLogUtil.rspOrderLog(log, order_orderId, sendRes);
+			
+			if (StringUtils.isNotBlank(sendRes)) {
+				JSONObject sendResp = JSON.parseObject(queryRes);
+				String code = bizDomain.codeValue(sendResp.get("error"));
+				bizDomain.msgValue(sendResp.get("msg"));
+				
+				if ("0".equals(code)) { // 请求成功
+					bizDomain.supplierOrderIdValue(sendResp.get("p_order_sn"));
+					br = bizDomain.newBR(BizDomain.ChargeStatus.CHARGE);
+				} else {// 请求失败
+					br = bizDomain.newBR(BizDomain.ChargeStatus.FAIL);
+				}
+			} else {
+				br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_RETURN_NONE);
+			}
+		} catch (Exception e) {
+			br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_EXECPTION);
+			ReqRspLogUtil.reqOrderExceptionLog(log, order_orderId, e);
+		}
+		return br;
+	}
+
+	@Override
+	public BizResponse handleBizQuery(SupplierQueryRequest sqr) {
+		String order_head = sqr.getHeadName();
+		BizResponse br = null;
+		String queryUrl = Constants.getString(order_head + "templete_queryUrl").trim();
+		String order_orderId = sqr.getPlatformTransId();
+		String supplierOrderId = sqr.getSupplierTransId();
+		BizDomain bizDomain = new BizDomain(order_orderId, supplierOrderId, true);
+		try {
+			String queryReq = Templete_Util.buildQueryReq(sqr);
+			ReqRspLogUtil.reqQueryLog(log, order_orderId, JsonUtils.obj2Json(queryReq));
+			String queryRes = HttpUtils.sendPostWithResEncode(queryUrl, queryReq, "application/x-www-form-urlencoded", "UTF-8");
+/*			String queryRes = HttpUtils.sendPost(queryUrl, queryReq, "application/json");
+			String queryRes = HttpUtils.sendPost(queryUrl, queryReq);
+			String queryRes = HttpUtils.sendGet(queryUrl, "UTF-8");*/
+			
+			ReqRspLogUtil.rspQueryLog(log, order_orderId, queryRes);
+			
+			if (StringUtils.isNotBlank(queryRes)) {
+				JSONObject queryRespMap = JSON.parseObject(queryRes);
+				String code = bizDomain.codeValue(queryRespMap.get("error"));
+				bizDomain.msgValue(queryRespMap.get("msg"));
+				
+				if ("0".equals(code)) {
+					//查询成功
+					String reportCode = bizDomain.codeValue(queryRespMap.get("order_status"));
+					bizDomain.msgValue(queryRespMap.get("reportMsg"));
+					if ("1".equals(reportCode)) {
+						br = bizDomain.newBR(BizDomain.ChargeStatus.CHARGE);
+					} else if ("2".equals(reportCode)) {
+						br = bizDomain.newBR(BizDomain.ChargeStatus.CHARGE);
+					} else if ("3".equals(reportCode)) {
+						br = bizDomain.newBR(BizDomain.ChargeStatus.SUCCESS);
+					} else if ("4".equals(reportCode)) {
+						bizDomain.msgValue(queryRespMap.get("msg")+","+queryRespMap.get("fail_msg"));
+						br = bizDomain.newBR(BizDomain.ChargeStatus.FAIL);
+					}else{
+						br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_EXECPTION);
+					}
+				} else {
+					br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_EXECPTION);
+				}
+			} else {
+				br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_RETURN_NONE);
+			}
+		} catch (Exception e) {
+			br = bizDomain.newBR(BizDomain.ChargeStatus.MANUAL_EXECPTION);
+			ReqRspLogUtil.reqQueryExceptionLog(log, order_orderId, e);
+		}
+		return br;
+	}
+
+	@Override
+	public void handleBizCallback(HttpServletRequest request, HttpServletResponse response, String order_head) {
+		SupplierCallbackRequest scr = null;
+		log.info("进入TempleteChinese回调");
+		String postData = HttpUtils.getReqPostString(request, log);
+		log.info("TempleteChinese回调数据:" + postData);
+		try {
+			if (StringUtils.isNotBlank(postData)) {
+				
+				Map<String, String> reqParams = HttpUtils.getReqParams(postData);
+				String code = reqParams.get("order_status") != null ? reqParams.get("order_status").toString() : "";
+				String msg = reqParams.get("fail_msg") != null ? reqParams.get("fail_msg").toString() : "";
+				
+				String supOrderId = reqParams.get("p_order_sn") != null ? reqParams.get("p_order_sn").toString() : "";
+				String simpleName = Constants.getString(order_head + "templete_simpleName");
+				long ts = System.currentTimeMillis();
+				
+				String ct = isPlatOrderId?CallbackType.PLATFORMTRANSID.ct:CallbackType.SUPPLIERORDERID.ct;
+				
+				if (StringUtils.equals(code, "3")) {
+					scr = new SupplierCallbackRequest(simpleName, ct, null, supOrderId, CallbackStatus.SUCCESS.cs, ts);
+				} else if (StringUtils.equals(code, "4")) {
+					scr = new SupplierCallbackRequest(simpleName, ct, CommonMsg.CALLBACK_FAIL + ","+code + ":" + msg, supOrderId,
+							CallbackStatus.FAILED.cs, ts);
+				} else if (StringUtils.equals(code, "1") || StringUtils.equals(code, "2")){
+					scr = new SupplierCallbackRequest(simpleName, ct, null, supOrderId,
+							CallbackStatus.UNDERWAY.cs, ts);
+				}
+				
+				Map<String, Object> map = ReflectUtil.getObject2Map(scr);
+				String sign = CustomerV100Util.getSign(map, Constants.getString(order_head + "templete_apikey"));
+				scr.setSign(sign);
+				String resendUrl = Constants.getString(order_head + "templete_callback");
+				CommonLogUtil.logCallBack(log, resendUrl, scr);
+				String res = HttpUtils.sendPost(resendUrl, JsonUtils.obj2Json(scr));
+				log.info(supOrderId+","+order_head + "_templete_callback-res=" + res);
+				PrintWriter pw = response.getWriter();
+				pw.print("success");
+				pw.flush();
+				pw.close();
+			}
+		} catch (Exception e) {
+			ReqRspLogUtil.callbackExceptionLog(log, postData, e);
+		}
+	}
+	
+}
