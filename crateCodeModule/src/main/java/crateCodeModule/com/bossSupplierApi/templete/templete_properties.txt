@@ -1,0 +1,11 @@
+#S10000_backUrl=http://101.200.190.38:18084/S10000_templete_callback.do   
+#===============================================================
+#  templete
+#===============================================================
+S10000_templete_callback=http://service.lljypt.com/supplier4platform_callback.do
+S10000_templete_apikey=tempapikey
+S10000_templete_simpleName=S10000_TEMPLETE
+S10000_templete_sendUrl=
+S10000_templete_queryUrl=
+S10000_templete_
+#=====================================================

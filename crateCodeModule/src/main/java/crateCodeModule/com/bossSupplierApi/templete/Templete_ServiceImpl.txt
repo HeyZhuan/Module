@@ -44,14 +44,14 @@ public class Templete_ServiceImpl implements Templete_Service {
 		String sendUrl = Constants.getString(order_head + "templete_sendUrl").trim();
 		try {
 			String sendReq = Templete_Util.buildSendReq(scr);
-			ReqRspLogUtil.reqOrderLog(log, order_orderId, JsonUtils.obj2Json(sendReq));
+			ReqRspLogUtil.reqOrderLog(log, order_orderId, sendReq);
 			String sendRes = HttpUtils.sendPostWithResEncode(sendUrl, sendReq, "application/x-www-form-urlencoded", "UTF-8");
-			//String sendRes = HttpUtils.sendPost(sendUrl, queryReq, "application/json");
-			//String queryRes = HttpUtils.sendGet(sendUrl, "UTF-8");
+			//String sendRes = HttpUtils.sendPost(sendUrl, sendReq, "application/json");
+			//String sendRes = HttpUtils.sendGet(sendUrl, "UTF-8");
 			ReqRspLogUtil.rspOrderLog(log, order_orderId, sendRes);
 			
 			if (StringUtils.isNotBlank(sendRes)) {
-				JSONObject sendResp = JSON.parseObject(queryRes);
+				JSONObject sendResp = JSON.parseObject(sendRes);
 				String code = bizDomain.codeValue(sendResp.get("error"));
 				bizDomain.msgValue(sendResp.get("msg"));
 				

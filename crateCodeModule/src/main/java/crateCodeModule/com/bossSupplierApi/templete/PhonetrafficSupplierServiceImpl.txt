@@ -1,0 +1,23 @@
+import xinxing.boss.supplier.supplierapi.phonetraffic.others.deli.service.Deli_Service;
+fengexian
+	private Deli_Service deli_Service;
+	fengexian
+		switch (endName) {
+	fengexian
+		switch (queryEndName) {
+	replace
+import xinxing.boss.supplier.supplierapi.phonetraffic.others.templete.service.Templete_Service;
+fengexian
+tab	@Autowired enter
+tab	private Templete_Service templete_Service;
+
+	fengexian
+	
+tab		case "TEMP":enter
+tab			bizResponse = templete_Service.handleBizReq(scr);enter
+tab			break;enter
+
+	fengexian
+tab		case "TEMP":enter
+tab			bizResponse = templete_Service.handleBizQuery(sqr);enter
+tab			break;enter

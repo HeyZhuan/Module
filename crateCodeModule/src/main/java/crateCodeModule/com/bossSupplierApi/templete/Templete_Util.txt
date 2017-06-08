@@ -13,6 +13,7 @@ import xinxing.boss.supplier.common.http.HttpUtils;
 import xinxing.boss.supplier.common.resource.Constants;
 import xinxing.boss.supplier.supplierapi.domain.BizDomain;
 import xinxing.boss.supplier.supplierapi.domain.BizResponse;
+import xinxing.boss.supplier.common.json.JsonUtils;
 
 public class Templete_Util {
 	/**
@@ -31,15 +32,15 @@ public class Templete_Util {
 		String[] split_productCode = order_productCode.split(",");//
 //		String  = Constants.getString(order_head+"templete_".trim()).trim();
 		
-		Map<String, String> map=new HashMap<>();
+		Map<String, Object> map=new HashMap<>();
+/*		map.put("", );
 		map.put("", );
 		map.put("", );
-		map.put("", );
+*/		
 		
 		
-		
-		String sendReq = JsonUtils.obj2Json(sendReqMap);
-//		String sendReq = HttpUtils.getStrByMapOrderByABC(sendReqMap);
+		String sendReq = JsonUtils.obj2Json(map);
+//		String sendReq = HttpUtils.getStrByMapOrderByABC(map);
 		return sendReq;
 	}
 
@@ -48,12 +49,13 @@ public class Templete_Util {
 		String order_orderId = sqr.getPlatformTransId();
 		String supplierOrderId = sqr.getSupplierTransId();
 //		String  = Constants.getString(order_head+"templete_".trim()).trim();
-		Map<String, String> map=new HashMap<>();
+		Map<String, Object> map=new HashMap<>();
+/*		map.put("", );
 		map.put("", );
 		map.put("", );
-		map.put("", );
+*/
 		
-		String sendReq = HttpUtils.getStrByMapOrderByABC(sendReqMap);
+		String sendReq = HttpUtils.getStrByMapOrderByABC(map);
 		return sendReq;
 	}
 	public static String getErrorMsg(String code) {

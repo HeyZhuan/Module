@@ -1,0 +1,24 @@
+import xinxing.boss.supplier.supplierapi.phonetraffic.others.deli.service.Deli_Service;
+fengexian
+	private Deli_Service deli_Service;
+	fengexian
+		shxc_Service.handleBizCallback(request, response, head);}
+	replace
+import xinxing.boss.supplier.supplierapi.phonetraffic.others.templete.service.Templete_Service;
+fengexian
+	@Autowired enter
+	private Templete_Service templete_Service;
+
+	fengexian
+	
+tab	/**enter
+tab	 * S10000 tempChinese 回调enter
+tab	 *enter
+tab	 * @param request enter
+tab	 * @param response enter
+tab	 */enter
+tab	@RequestMapping(value = "/S10000_templete_callback.do")enter
+tab	public void templeteCallBack(HttpServletRequest request, HttpServletResponse response) {enter
+tab		String head = "S10000_";enter
+tab		templete_Service.handleBizCallback(request, response, head);enter
+tab	}enter
