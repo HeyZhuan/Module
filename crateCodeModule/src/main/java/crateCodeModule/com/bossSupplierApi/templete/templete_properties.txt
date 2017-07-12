@@ -1,4 +1,4 @@
-#S10000_backUrl=http://101.200.190.38:18084/S10000_templete_callback.do   
+#S10000_backUrl=http://api.saas.supplier.llztc.net/S10000_templete_callback.do   
 #===============================================================
 #  templete
 #===============================================================
