@@ -1,0 +1,43 @@
+package com.glareme.core.service.business.service@prefix.@class;
+
+import org.nutz.dao.Cnd;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.glareme.core.common.db.CommonDao;
+import com.glareme.core.common.db.NutzType;
+import com.glareme.core.service.business.pojo@prefix.@CLASS;
+
+/**
+ *  @author zhuan
+ */
+public class @CLASSServiceImpl implements @CLASSService{
+
+
+	@Autowired
+	private CommonDao commonDao;
+    
+    @Override
+   	public @CLASS get@CLASS(int @classId){
+    	return commonDao.fetch(@CLASS.class,Cnd.where("id", NutzType.EQ.opt, @classId));
+    }
+    
+    @Override
+    public @CLASS add@CLASS(@CLASS @class){
+   		return commonDao.insert(@class);
+    }
+   
+    @Override
+    public int update@CLASS(@CLASS @class){
+    	return commonDao.update(@class);
+    }
+   
+    @Override
+    public int delete@CLASS(int id){
+    	return commonDao.delete(@CLASS.class,id);
+    }
+   
+    @Override
+    public int delete@CLASS(String[] ids){
+    	return	commonDao.clear(@CLASS.class, Cnd.where("id", NutzType.IN.opt, ids));
+    }
+}

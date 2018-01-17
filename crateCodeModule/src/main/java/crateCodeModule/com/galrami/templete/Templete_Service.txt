@@ -1,0 +1,19 @@
+package com.glareme.core.service.business.service@prefix.@class;
+
+import com.glareme.core.service.business.pojo@prefix.@CLASS;
+
+/**
+ *  @author zhuan
+ */
+public interface @CLASSService {
+
+   @CLASS get@CLASS(int @classId);
+   
+   @CLASS add@CLASS(@CLASS @class);
+   
+   int update@CLASS(@CLASS @class);
+   
+   int delete@CLASS(int id);
+   
+   int delete@CLASS(String[] ids);
+}

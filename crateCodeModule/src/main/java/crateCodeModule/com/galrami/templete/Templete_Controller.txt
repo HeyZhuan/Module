@@ -1,0 +1,133 @@
+package com.glareme.admin.mall@prefix.@class;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.glareme.core.common.db.MysqlUtil;
+import com.glareme.core.common.rsp.admin.CmsDataService;
+import com.glareme.core.common.security.Digests;
+import com.glareme.core.common.security.Encodes;
+import com.glareme.core.common.str.StrUtils;
+import com.glareme.core.service.business.pojo@prefix.@CLASS;
+import com.glareme.core.service.business.service@prefix.@class.@CLASSService;
+
+
+@Controller
+@RequestMapping("mall/@class")
+public class @CLASSController {
+	private static Logger log = LoggerFactory.getLogger(@CLASSController.class);
+	
+	@Autowired
+	private @CLASSService @classService;
+	
+	@Autowired
+	private CmsDataService cmsDataService;
+	
+	/**
+	 * 默认页面
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public String list() {
+		return "mall/app/@class/@classList";
+	}
+
+	/**
+	 * 获取@Name 数据
+	 */
+	@RequestMapping(value = "@classList", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getData(HttpServletRequest request) {
+		return cmsDataService.getCmsReqData(@CLASS.class, request);
+	}
+
+	/**
+	 * 添加@Name跳转
+	 * 
+	 * @param model
+	 */
+	@RequiresPermissions("mall:@class:add")
+	@RequestMapping(value = "create", method = RequestMethod.GET)
+	public String createForm(Model model) {
+		@CLASS @class = new @CLASS();
+		model.addAttribute("@class", @class);
+		model.addAttribute("action", "create");
+		return "mall/app/@class/@classForm";
+	}
+
+	/**
+	 * 添加@Name
+	 * 
+	 * @param @class
+	 * @param model
+	 */
+	@RequiresPermissions("mall:@class:add")
+	@RequestMapping(value = "create", method = RequestMethod.POST)
+	@ResponseBody
+	public String create(@Validated @CLASS @class, Integer roleId) {
+		@classService.add@CLASS(@class);
+		return "success";
+	}
+
+	/**
+	 * 修改@Name跳转
+	 * 
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("mall:@class:update")
+	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
+	public String updateForm(@PathVariable("id") Integer id, Model model) {
+		@CLASS @class = @classService.get@CLASS(id);
+		model.addAttribute("@class", @class);
+		model.addAttribute("action", "update");
+		return "mall/app/@class/@classForm";
+	}
+
+	/**
+	 * 修改@Name
+	 * 
+	 * @param @class
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("mall:@class:update")
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	@ResponseBody
+	public String update(@Validated @ModelAttribute @RequestBody @CLASS @class) {
+		@classService.update@CLASS(@class);
+		return "success";
+	}
+
+	/**
+	 * 删除@Name
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequiresPermissions("mall:@class:delete")
+	@RequestMapping(value = "delete")
+	@ResponseBody
+	public String delete(String[] ids) {
+		@classService.delete@CLASS(ids);
+		return "success";
+	}
+}
