@@ -1,4 +1,4 @@
-package crateCodeModule.com.galrami.cmd;
+package crateCodeModule.com.wareHouses.cmd;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -13,26 +13,21 @@ import com.alibaba.fastjson.JSONObject;
 import crateCodeModule.com.common.file.CommonUtils;
 import crateCodeModule.com.common.file.FileUtil;
 import crateCodeModule.com.common.http.HttpUtils;
-import crateCodeModule.com.galrami.classes.AppUserScoreChangeRecord;
-import crateCodeModule.com.galrami.classes.ProxyInfo;
 import crateCodeModule.com.galrami.classes.ProxyProductInfo;
 import crateCodeModule.com.galrami.util.FieldUtils;
 import crateCodeModule.com.galrami.util.JspFieldName;
+import crateCodeModule.com.wareHouses.classes.ProductCategory;
 
 @Service
 public class CreateClass {
 	
 	//要生成的jsp文件路径
-	private static final String listUrl="F:/Eclipse_WorkSpace/glareme-parent/glareme-admin/src/main/webapp/WEB-INF/views/mall/";
-	//要生成的Service路径
-	private static final String serviceUrl="F:/Eclipse_WorkSpace/glareme-parent/glareme-core/src/main/java/com/glareme/core/service/business/service/";
+	private static final String listUrl="F:/git_work/wareHouses/WareHouses/src/main/webapp/WEB-INF/jsp/wareHouses/";
 	//要生成的Controller路径
-	private static final String controllerUrl="F:/Eclipse_WorkSpace/glareme-parent/glareme-admin/src/main/java/com/glareme/admin/mall/";
-	//要生成的System_context路径
-	private static final String system_contextUrl="F:/Eclipse_WorkSpace/glareme-parent/glareme-admin/src/main/webapp/WEB-INF/config/spring/system_Context.xml";
+	private static final String classUrl="F:/git_work/wareHouses/WareHouses/src/main/java/com/wareHouses/business/";
 	
 	//templete文件路径
-	private static final String tempUrl="F:/git_work/crateCodeModule/src/main/java/crateCodeModule/com/galrami/templete/";
+	private static final String tempUrl="F:/git_work/crateCodeModule/src/main/java/crateCodeModule/com/wareHouses/templete/";
 	
 	
 	public static Map<String, JSONObject> allMap=new LinkedHashMap<>();//所有字段
@@ -49,38 +44,60 @@ public class CreateClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String className="proxyProductInfo"; //类名--英文--小写
-		String chineseName="代理产品信息";//
-		Class clazz=ProxyProductInfo.class;// 实体类
-		int pid=590;//菜单的上一级目录
+		String className="productCategory"; //类名--英文--小写
+		String chineseName="产品分类信息";//
+		Class clazz=ProductCategory.class;// 实体类
+		String tableName="wr_product_category";
+		String CLASS=CommonUtils.getFirstUpWord(className);
+		int pid=21;//菜单的上一级目录
 		prefix="";//例如 ： .app
 		prefixUrl="";  //例如：   app/
 		try {
 			
-			createService(className);
-			createController(className,chineseName);
-			createJsp(className,clazz);
-			replaceSystem_Context(className);
+//			createService(className);
+//			createController(className,chineseName);
+//			createJsp(className,clazz);
+//			createDomain(className, chineseName, clazz, tableName);
 			
 			//生成对应权限
-			HttpUtils.sendGet("http://localhost:8080/glareme-admin/data/addMenu?pid="+pid+"&name="+chineseName+"&className="+className, "UTF-8");
-			
+			//HttpUtils.sendGet("http://localhost:8080/WareHouses/data/addMenu?pid="+pid+"&name="+chineseName+"&className="+className, "UTF-8");
+			//生成对应表
+			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/createTable?className=com.wareHouses.business."+className+".domain."+CLASS, "UTF-8");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 	}
 	
-	
-	public static void replaceSystem_Context(String className) throws IOException{
+	/**
+	 * 构造Domain
+	 * @throws IOException 
+	 * 
+	 */
+	public static void createDomain(String className,String chineseName,Class clazz,String tableName) throws IOException{
 		String CLASS=CommonUtils.getFirstUpWord(className);
-		//替换system_contenxt 中的内容，添加注解
-		String content = FileUtil.read(system_contextUrl,true);
-		String replaceContent="<bean class=\"com.glareme.core.service.business.service.app.appArticleCategory.AppArticleCategoryServiceImpl\"></bean>\r\n"+
-					"\t<bean class=\"com.glareme.core.service.business.service"+prefix+"."+className+"."+CLASS+"ServiceImpl\"></bean>";
-		content=content.replace("<bean class=\"com.glareme.core.service.business.service.app.appArticleCategory.AppArticleCategoryServiceImpl\"></bean>", replaceContent);
-		FileUtil.write(system_contextUrl, content);
+		String content = FileUtil.read(tempUrl+"Templete_Domain.txt",true);
+		
+		//获取所有字段
+		Field[] fields = clazz.getDeclaredFields();
+		StringBuffer sb=new StringBuffer();
+		for (Field field : fields) {
+			String fieldName = field.getName();
+			String typeName = field.getType().getName();
+			
+			if(typeName.contains("String")){
+				sb.append("\tprivate String "+fieldName+";\r\n");
+			}else{
+				sb.append("\tprivate "+typeName +" "+fieldName+";\r\n");
+			}
+		}
+		
+		content=content.replace("@table", tableName).replace("@class", className).replace("@Name", chineseName).replace("@CLASS", CLASS).replace("@field", sb.toString());
+		FileUtil.write(classUrl+prefixUrl+className+"/domain/"+CLASS+".java", content);
+		
+		System.out.println("---------构造Domain 成功");
 	}
+	
 	
 	/**
 	 * 构造Controller
@@ -91,7 +108,7 @@ public class CreateClass {
 		String CLASS=CommonUtils.getFirstUpWord(className);
 		String content = FileUtil.read(tempUrl+"Templete_Controller.txt",true);
 		content=content.replace("@CLASS", CLASS).replace("@class", className).replace("@Name", chineseName).replace("@prefix", prefix);
-		FileUtil.write(controllerUrl+prefixUrl+className+"/"+CLASS+"Controller.java", content);
+		FileUtil.write(classUrl+prefixUrl+className+"/cmd/"+CLASS+"Cmd.java", content);
 		
 		System.out.println("---------构造Controller 成功");
 	}
@@ -106,12 +123,12 @@ public class CreateClass {
 		
 		String content = FileUtil.read(tempUrl+"Templete_Service.txt",true);
 		content=content.replace("@CLASS", CLASS).replace("@class", className).replace("@prefix", prefix);
-		FileUtil.write(serviceUrl+prefixUrl+className+"/"+CLASS+"Service.java", content);
+		FileUtil.write(classUrl+prefixUrl+className+"/service/"+CLASS+"Service.java", content);
 		
 		
 		content = FileUtil.read(tempUrl+"Templete_ServiceImpl.txt",true);
 		content=content.replace("@CLASS", CLASS).replace("@class", className).replace("@prefix", prefix);
-		FileUtil.write(serviceUrl+prefixUrl+className+"/"+CLASS+"ServiceImpl.java", content);
+		FileUtil.write(classUrl+prefixUrl+className+"/service/"+CLASS+"ServiceImpl.java", content);
 		System.out.println("---------构造Service 成功");
 	}
 	
@@ -129,9 +146,9 @@ public class CreateClass {
 		String fieldContent = createFieldContent();
 		String url="${ctx}/mall/"+className+"/"+className+"List";
 		String content = FileUtil.read(tempUrl+"Templete_List.txt",true);
-		content=content.replace("@query", queryContent).replace("@url", url).replace("@field", fieldContent).replace("@add", "mall:"+className+":add")
-				.replace("@update", "mall:"+className+":update").replace("@add", "mall:"+className+":delete")
-				.replace("@url_add", "mall/"+className+"/create").replace("@url_update", "mall/"+className+"/update").replace("@url_del", "mall/"+className+"/delete");
+		content=content.replace("@query", queryContent).replace("@field", fieldContent).replace("@add", "wareHouses:"+className+":add")
+				.replace("@update", "wareHouses:"+className+":update").replace("@delete", "wareHouses:"+className+":delete")
+				.replace("@url_add", "wareHouses/"+className+"/create").replace("@url_update", "wareHouses/"+className+"/update").replace("@url_del", "wareHouses/"+className+"/delete").replace("@url", url);
 		FileUtil.write(listUrl+prefix+className+"/"+className+"List.jsp", content);
 		
 		System.out.println("-------------构造List 成功");
@@ -232,13 +249,13 @@ public class CreateClass {
 		for (Map.Entry<String, JSONObject> entry: queryMap.entrySet()) {
 			JSONObject obj = entry.getValue();
 			int isSelect = obj.getIntValue("isSelect");
-			String str="<input type=\"text\" name=\""+obj.getString("queryType")+"\" class=\"easyui-validatebox\"  value=\"\"  data-options=\"prompt: '"+obj.getString("fieldName")+"'\"/>";
+			String str="\t<input type=\"text\" name=\""+obj.getString("queryType")+"\" class=\"easyui-validatebox\"  value=\"\"  data-options=\"prompt: '"+obj.getString("fieldName")+"'\"/>";
 			if(isSelect==1){
-				str="<select name='"+obj.getString("queryType")+"'>"+
-							"<option value=\"\">"+obj.getString("fieldName")+"</option>"+
-							"<option value=\"1\">是</option>"+
-							"<option value=\"0\">否</option>"+
-							"</select>";
+				str="\t<select name='"+obj.getString("queryType")+"'>\r\n"+
+							"\t\t<option value=\"\">"+obj.getString("fieldName")+"</option>\r\n"+
+							"\t\t<option value=\"1\">是</option>\r\n"+
+							"\t\t<option value=\"0\">否</option>\r\n"+
+							"\t</select>";
 			}
 			sb.append(str+"\r\n");
 		}

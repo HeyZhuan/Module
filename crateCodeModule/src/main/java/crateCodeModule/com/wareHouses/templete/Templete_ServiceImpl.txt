@@ -1,0 +1,44 @@
+package com.wareHouses.business.@class.service;
+
+import org.nutz.dao.Cnd;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.wareHouses.common.db.CommonDao;
+import com.wareHouses.common.nutz.NutzType;
+import com.wareHouses.business.@class.domain.@CLASS;
+
+/**
+ *  @author zhuan
+ */
+ @Service
+public class @CLASSServiceImpl implements @CLASSService{
+
+
+	@Autowired
+	private CommonDao commonDao;
+    
+    @Override
+   	public @CLASS get@CLASS(int @classId){
+    	return commonDao.fetch(@CLASS.class,Cnd.where("id", NutzType.EQ.opt, @classId));
+    }
+    
+    @Override
+    public @CLASS add@CLASS(@CLASS @class){
+   		return commonDao.insert(@class);
+    }
+   
+    @Override
+    public int update@CLASS(@CLASS @class){
+    	return commonDao.update(@class);
+    }
+   
+    @Override
+    public int delete@CLASS(int id){
+    	return commonDao.delete(@CLASS.class,id);
+    }
+   
+    @Override
+    public int delete@CLASS(String[] ids){
+    	return	commonDao.clear(@CLASS.class, Cnd.where("id", NutzType.IN.opt, ids));
+    }
+}

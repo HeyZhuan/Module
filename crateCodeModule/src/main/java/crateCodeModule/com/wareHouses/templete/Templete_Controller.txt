@@ -1,4 +1,4 @@
-package com.glareme.admin.mall@prefix.@class;
+package com.wareHouses.business.@class.cmd;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,33 +20,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.wareHouses.common.param.ParamUtils;
+import com.wareHouses.common.service.BaseService;
+import org.nutz.dao.Cnd;
+import org.nutz.dao.QueryResult;
+import org.nutz.dao.pager.Pager;
 
-import com.glareme.core.common.db.MysqlUtil;
-import com.glareme.core.common.rsp.admin.CmsDataService;
-import com.glareme.core.common.security.Digests;
-import com.glareme.core.common.security.Encodes;
-import com.glareme.core.common.str.StrUtils;
-import com.glareme.core.service.business.pojo@prefix.@CLASS;
-import com.glareme.core.service.business.service@prefix.@class.@CLASSService;
+import com.wareHouses.business.@class.domain.@CLASS;
+import com.wareHouses.business.@class.service.@CLASSService;
+import com.wareHouses.common.service.BaseService;
 
 
 @Controller
-@RequestMapping("mall/@class")
-public class @CLASSController {
-	private static Logger log = LoggerFactory.getLogger(@CLASSController.class);
+@RequestMapping("wareHouses/@class")
+public class @CLASSCmd {
+	private static Logger log = LoggerFactory.getLogger(@CLASSCmd.class);
 	
 	@Autowired
 	private @CLASSService @classService;
 	
 	@Autowired
-	private CmsDataService cmsDataService;
+	private BaseService baseService;
 	
 	/**
 	 * 默认页面
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String list() {
-		return "mall/@prefixUrl@class/@classList";
+		return "wareHouses/@prefixUrl@class/@classList";
 	}
 
 	/**
@@ -55,7 +56,12 @@ public class @CLASSController {
 	@RequestMapping(value = "@classList", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getData(HttpServletRequest request) {
-		return cmsDataService.getCmsReqData(@CLASS.class, request);
+		Map<String, Object> filterParamMap = ParamUtils.getParametersStartingWith(request);
+			Cnd cnd = ParamUtils.getCnd(filterParamMap);
+			int[] param = ParamUtils.getPageParam(request);
+			Pager pager = baseService.creatPager(param[0], param[1]);
+			QueryResult result = baseService.get(@CLASS.class, cnd, pager);
+			return ParamUtils.getEasyUIData(result);
 	}
 
 	/**
@@ -63,13 +69,13 @@ public class @CLASSController {
 	 * 
 	 * @param model
 	 */
-	@RequiresPermissions("mall:@class:add")
+	@RequiresPermissions("wareHouses:@class:add")
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		@CLASS @class = new @CLASS();
 		model.addAttribute("@class", @class);
 		model.addAttribute("action", "create");
-		return "mall/@prefixUrl@class/@classForm";
+		return "wareHouses/@prefix@class/@classForm";
 	}
 
 	/**
@@ -78,10 +84,10 @@ public class @CLASSController {
 	 * @param @class
 	 * @param model
 	 */
-	@RequiresPermissions("mall:@class:add")
+	@RequiresPermissions("wareHouses:@class:add")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@ResponseBody
-	public String create(@Validated @CLASS @class, Integer roleId) {
+	public String create(@Validated @CLASS @class) {
 		@classService.add@CLASS(@class);
 		return "success";
 	}
@@ -93,13 +99,13 @@ public class @CLASSController {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("mall:@class:update")
+	@RequiresPermissions("wareHouses:@class:update")
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") Integer id, Model model) {
 		@CLASS @class = @classService.get@CLASS(id);
 		model.addAttribute("@class", @class);
 		model.addAttribute("action", "update");
-		return "mall/@prefixUrl@class/@classForm";
+		return "wareHouses/@prefixUrl@class/@classForm";
 	}
 
 	/**
@@ -109,7 +115,7 @@ public class @CLASSController {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("mall:@class:update")
+	@RequiresPermissions("wareHouses:@class:update")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@ResponseBody
 	public String update(@Validated @ModelAttribute @RequestBody @CLASS @class) {
@@ -123,7 +129,7 @@ public class @CLASSController {
 	 * @param id
 	 * @return
 	 */
-	@RequiresPermissions("mall:@class:delete")
+	@RequiresPermissions("wareHouses:@class:delete")
 	@RequestMapping(value = "delete")
 	@ResponseBody
 	public String delete(String[] ids) {

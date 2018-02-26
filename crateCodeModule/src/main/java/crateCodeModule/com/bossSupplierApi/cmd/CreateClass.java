@@ -29,8 +29,8 @@ public class CreateClass {
 	
 	
 	public static void main(String[] args) {
-		String className="xiangshang"; //类名--英文--小写
-		String classNameChinese="向上";    //中文名
+		String className="szgzx"; //类名--英文--小写
+		String classNameChinese="深圳广众信";    //中文名
 		
 		try {
 			createService(className, classNameChinese);
@@ -66,7 +66,7 @@ public class CreateClass {
 		int i=0;
 		for (String name : cName) {
 			String content = FileUtil.read(tempUrl+name,true);
-			content=content.replace("templete", className).replace("Templete", fName).replace("TempleteChinese", classNameChinese);
+			content=content.replace("TempleteChinese", classNameChinese).replace("templete", className).replace("Templete", fName);
 			FileUtil.write(serviceUrl+className+cNameAddress[i], content);
 			i++;
 		}
