@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wareHouses.common.db.CommonDao;
 import com.wareHouses.common.nutz.NutzType;
 import com.wareHouses.business.@class.domain.@CLASS;
+import org.springframework.stereotype.Service;
 
 /**
  *  @author zhuan

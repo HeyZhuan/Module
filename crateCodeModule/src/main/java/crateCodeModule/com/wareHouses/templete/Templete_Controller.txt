@@ -47,7 +47,7 @@ public class @CLASSCmd {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String list() {
-		return "wareHouses/@prefixUrl@class/@classList";
+		return "wareHouses/@class/@classList";
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class @CLASSCmd {
 		@CLASS @class = @classService.get@CLASS(id);
 		model.addAttribute("@class", @class);
 		model.addAttribute("action", "update");
-		return "wareHouses/@prefixUrl@class/@classForm";
+		return "wareHouses/@class/@classForm";
 	}
 
 	/**

@@ -3,7 +3,7 @@
 <html>
 <head>
 <title></title>
-<%@ include file="/WEB-INF/views/common/base/easyui.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/base/easyui.jsp"%>
 
 </head>
 <body>
