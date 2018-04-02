@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<context:property-placeholder
+
+		location="file:src/main/webapp/WEB-INF/config/properties/db/setting.properties"/>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>file:src/main/webapp/WEB-INF/config/properties/db/setting</value>
+			</list>
+		</property>
+		<property name="cacheSeconds" value="36000" />
+	</bean>
+	
+	<bean id="constants" class="com.wareHouses.common.resource.Constants">
+		<property name="messageSource" ref="messageSource" />
+	</bean>	 
+
+	<!-- 开启自动扫描 -->
+		<!-- 自动扫描且不扫描@Controller -->
+	<context:component-scan base-package="com">
+		<!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/> -->
+	</context:component-scan>
+	
+ 	<!-- database-->
+ 	<bean id="dataSource"  
+        class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">  
+        <property name="targetDataSource">  
+            <ref local="mainDataSource" />  
+        </property>  
+    </bean>
+
+	<bean id="mainDataSource" class="com.jolbox.bonecp.BoneCPDataSource"
+		destroy-method="close" dependency-check="none">
+		<property name="driverClass">
+			<value>${datasource.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${datasource.url}</value>
+		</property>
+		<property name="username">
+			<value>${datasource.username}</value>
+		</property>
+		<property name="password">
+			<value>${datasource.password}</value>
+		</property>
+
+		<property name="idleConnectionTestPeriod">
+			<value>${boneCP.idleConnectionTestPeriod}</value>
+		</property>
+
+		<property name="idleMaxAge">
+			<value>${boneCP.idleMaxAge}</value>
+		</property>
+		<property name="maxConnectionsPerPartition">
+			<value>${boneCP.maxConnectionsPerPartition}</value>
+		</property>
+		<property name="minConnectionsPerPartition">
+			<value>${boneCP.minConnectionsPerPartition}</value>
+		</property>
+		<property name="partitionCount">
+			<value>${boneCP.partitionCount}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${boneCP.acquireIncrement}</value>
+		</property>
+		<property name="statementsCacheSize">
+			<value>${boneCP.statementsCacheSize}</value>
+		</property>
+		<property name="statementsCachedPerConnection">
+			<value>${boneCP.statementsCachedPerConnection}</value>
+		</property>
+		<property name="releaseHelperThreads">
+			<value>${boneCP.releaseHelperThreads}</value>
+		</property>
+	</bean>
+ 	
+	
+	 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+      
+    <!-- 开启事务控制的注解支持 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+
+	<!-- command S-->
+
+	<bean id="commandContext" class="com.imlianai.common.context.ConcreteCommandContext"/>
+
+	<bean id="commandExecutor" class="com.imlianai.common.executor.ConcreteCommandExecutor">
+		<property name="commandContext" ref="commandContext"/>
+	</bean>
+
+
+	<bean class="com.imlianai.common.bean.BeanManager"/>
+
+	<!-- command E-->
+
+	<!-- the god damn httpclient -->
+	<bean id="httpclient" class="org.apache.http.impl.client.DefaultHttpClient">
+		<constructor-arg index="0" ref="threadSafeClientConnManager" />
+		<constructor-arg index="1" ref="httpParams" />
+	</bean>
+
+	<bean id="connConnectionParamBean" class="org.apache.http.params.HttpConnectionParamBean">
+		<constructor-arg index="0" ref="httpParams" />
+		<property name="connectionTimeout">
+			<value>5000</value>
+		</property>
+		<property name="soTimeout">
+			<value>8000</value>
+		</property>
+		<property name="linger">
+			<value>0</value>
+		</property>
+	</bean>
+
+	<bean id="connManagerParamBean" class="org.apache.http.conn.params.ConnManagerParamBean">
+		<constructor-arg index="0" ref="httpParams" />
+		<property name="connectionsPerRoute" ref="connPerRouteBean" />
+		<property name="maxTotalConnections">
+			<value>10000</value>
+		</property>
+		<property name="timeout">
+			<value>5000</value>
+		</property>
+	</bean>
+
+	<bean id="connPerRouteBean" class="org.apache.http.conn.params.ConnPerRouteBean">
+		<property name="defaultMaxPerRoute">
+			<value>3000</value>
+		</property>
+	</bean>
+
+	<bean id="httpParams" class="org.apache.http.params.BasicHttpParams">
+	</bean>
+
+	<bean id="threadSafeClientConnManager"
+		class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"
+		destroy-method="shutdown">
+		<constructor-arg index="0" ref="httpParams" />
+		<constructor-arg index="1" ref="schemeRegistry" />
+	</bean>
+
+	<bean id="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry">
+		<property name="items">
+			<map>
+				<entry key="http">
+					<ref bean="httpScheme" />
+				</entry>
+				<entry key="https">
+					<ref bean="httpsScheme" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="socketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
+		factory-method="getSocketFactory">
+	</bean>
+
+	<bean id="sslSocketFactory" class="org.apache.http.conn.ssl.SSLSocketFactory"
+		factory-method="getSocketFactory">
+	</bean>
+
+	<bean id="httpScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg index="0">
+			<value>http</value>
+		</constructor-arg>
+		<constructor-arg index="1" ref="socketFactory" />
+		<constructor-arg index="2">
+			<value>80</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="httpsScheme" class="org.apache.http.conn.scheme.Scheme">
+		<constructor-arg index="0">
+			<value>https</value>
+		</constructor-arg>
+		<constructor-arg index="1" ref="sslSocketFactory" />
+		<constructor-arg index="2">
+			<value>443</value>
+		</constructor-arg>
+	</bean>
+
+	
+	<bean id="commonDAO" class="com.wareHouses.common.db.CommonDao">
+		<property name="dataSource" ref="dataSource"/>  
+	</bean>
+</beans>
