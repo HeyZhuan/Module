@@ -1,4 +1,4 @@
-package crateCodeModule.com.fee.cmd;
+ package crateCodeModule.com.fee.cmd;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -12,21 +12,18 @@ import com.alibaba.fastjson.JSONObject;
 
 import crateCodeModule.com.common.file.CommonUtils;
 import crateCodeModule.com.common.file.FileUtil;
-import crateCodeModule.com.common.http.HttpUtils;
-import crateCodeModule.com.galrami.classes.ProxyProductInfo;
+import crateCodeModule.com.fee.domain.Customer;
+import crateCodeModule.com.fee.domain.CustomerProduct;
 import crateCodeModule.com.galrami.util.FieldUtils;
 import crateCodeModule.com.galrami.util.JspFieldName;
-import crateCodeModule.com.wareHouses.classes.CustomerBalanceRecord;
-import crateCodeModule.com.wareHouses.classes.LogInfo;
-import crateCodeModule.com.wareHouses.classes.ProductCategory;
 
 @Service
 public class FeeCreateClass {
 	
 	//要生成的jsp文件路径
-	private static final String listUrl="F:/git_work/wareHouses/WareHouses/src/main/webapp/WEB-INF/jsp/wareHouses/";
+	private static final String listUrl="F:/git_work/Fee/src/main/webapp/WEB-INF/jsp/fee/";
 	//要生成的Controller路径
-	private static final String classUrl="F:/git_work/wareHouses/WareHouses/src/main/java/com/wareHouses/business/";
+	private static final String classUrl="F:/git_work/Fee/src/main/java/com/Fee/business/";
 	
 	//templete文件路径
 	private static final String tempUrl="F:/git_work/crateCodeModule/src/main/java/crateCodeModule/com/wareHouses/templete/";
@@ -46,25 +43,25 @@ public class FeeCreateClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String className="customerBalanceRecord"; //类名--英文--小写
-		String chineseName="采购商余额信息";//
-		Class clazz=CustomerBalanceRecord.class;// 实体类
-		String tableName="customer_balance_record";
+		String className="customerProduct"; //类名--英文--小写
+		String chineseName="采购商产品信息";//
+		Class clazz=CustomerProduct.class;// 实体类
+		String tableName="fee_customer_product";
 		String CLASS=CommonUtils.getFirstUpWord(className);
 		int pid=56;//菜单的上一级目录
 		prefix="";//例如 ： .app
 		prefixUrl="";  //例如：   app/
 		try {
 			
-//			createService(className);
-//			createController(className,chineseName);
-//			createJsp(className,clazz);
-//			createDomain(className, chineseName, clazz, tableName);
+			createService(className);
+			createController(className,chineseName);
+			createJsp(className,clazz);
+			createDomain(className, chineseName, clazz, tableName);
 			
 			//生成对应权限
 //			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/addMenu?pid="+pid+"&name="+chineseName+"&className="+className, "UTF-8");
 			//生成对应表
-			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/createTable?className=com.wareHouses.business."+className+".domain."+CLASS, "UTF-8");
+//			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/createTable?className=com.Fee.business."+className+".domain."+CLASS, "UTF-8");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
