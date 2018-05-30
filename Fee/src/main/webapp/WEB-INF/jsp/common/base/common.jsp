@@ -36,7 +36,7 @@
 	}
 
 	//将long转date
-	function long2date(value) {
+	function long2date(value,row,index) {
 		
 		if (value == null || value == 0) {
 			return "";
@@ -46,19 +46,15 @@
 	}
 
 	//显示绿色或红色
-	function greenOrRed(value, showValue, more) {
+	function greenOrRed(value, showValue) {
 		var color = (value == 1 ? "green" : "red");
 		returnVal = '<span style="color:'+color+';font-weight:bold;">' + showValue + '</span>';
-		if (more) {
-			if (value != 1 && value != 2) {
-				returnVal = showValue;
-			}
-		}
 		return returnVal;
 	}
 
 	
 	function create(url, title) {
+		
 		d = $("#dlg").dialog(
 				{ title : title, width :450 , height : 600, href : url, maximizable : true, modal : true,
 					buttons : [
@@ -157,25 +153,23 @@
 		}
 	}
 	
-	//获取单价  
-	function getUnitPrice(value, row, index){
-		
-		if((row.price!=null || row.price!=undefined)&& (row.num!=null && row.num!=undefined)){
-			return (row.price/row.num).toFixed(3);
+	//通用---获取状态
+	function getStatus(value,row,index){
+		if(value==0){
+			return greenOrRed(0,"冻结");
+		}else if(value==1){
+			return greenOrRed(1,"开通");
 		}
 	}
 	
-	//获取时间格式化
-	function getTime(value, row, index){
-		return long2date(value);
-	}
-	
-	//获取货物
-	function getProducts(value, row, index){
-		var $map = ${applicationScope.sysParam.productInfoMapJson};
+	//通用---获取采购商名称
+	function getCusName(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.customerMapJson};
 		var retrunVal = "";
 		$.each($map, function(key, val) {
-			if (key == value) {
+			if (key == row.customerId) {
 				retrunVal = val.name;
 				return;
 			}
@@ -183,13 +177,95 @@
 		return retrunVal;
 	}
 	
-	//获取仓库
-	function getWareHouses(value, row, index){
-		var $map = ${applicationScope.sysParam.wareHousesMapJson};
+	
+	//通用---获取供应商名称
+	function getSupName(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.supplierMapJson};
 		var retrunVal = "";
 		$.each($map, function(key, val) {
-			if (key == value) {
+			if (key == row.supplierId) {
 				retrunVal = val.name;
+				return;
+			}
+		});
+		return retrunVal;
+	}
+	
+	//通用---获取产品大类名称
+	function getCateName(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.productCategoryMapJson};
+		var retrunVal = "";
+		$.each($map, function(key, val) {
+			if (key == row.categoryId) {
+				retrunVal = val.name;
+				return;
+			}
+		});
+		return retrunVal;
+	}
+	
+	//通用---获取省份
+	function getProvince(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.productCategoryMapJson};
+		var retrunVal = "";
+		$.each($map, function(key, val) {
+			if (key == row.categoryId) {
+				retrunVal = val.province;
+				return;
+			}
+		});
+		return retrunVal;
+	}
+	
+	//通用---获取运营商
+	function getOperator(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.productCategoryMapJson};
+		var retrunVal = "";
+		$.each($map, function(key, val) {
+			if (key == row.categoryId) {
+				retrunVal = val.operator;
+				return;
+			}
+		});
+		return retrunVal;
+	}
+	
+	//通用---获取运营商
+	function getArea(value,row,index){
+		
+		if(value==0){
+			return "本省";
+		}else{
+			return "全国";
+		}
+	}
+	
+	//通用---获取规格
+	function getSize(value,row,index){
+		
+		//获取供货商的列表
+		var $map = ${applicationScope.sysParam.productCategoryMapJson};
+		var retrunVal = "";
+		$.each($map, function(key, val) {
+			
+			if (key == row.categoryId) {
+				var unit=val.unit;
+				
+				var unitStr="元";
+				if(unit==0){
+					unitStr="M";
+				}else if(unit==1){
+					unitStr="G";
+				}
+				retrunVal=val.size+unitStr;
 				return;
 			}
 		});

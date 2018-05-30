@@ -1,4 +1,4 @@
-package com.wareHouses.business.@class.cmd;
+package com.Fee.business.@class.cmd;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +26,8 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 
-import com.wareHouses.business.@class.domain.@CLASS;
-import com.wareHouses.business.@class.service.@CLASSService;
+import com.Fee.business.@class.domain.@CLASS;
+import com.Fee.business.@class.service.@CLASSService;
 import com.wareHouses.common.service.BaseService;
 
 

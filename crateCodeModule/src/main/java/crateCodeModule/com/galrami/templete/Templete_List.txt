@@ -43,7 +43,7 @@ var d;
 $(function(){   
 	dg=$('#dg').datagrid({    
 	method: "get",
-    url:'@url', 
+    url:'@URL', 
     fit : true,
 	fitColumns : true,
 	border : false,

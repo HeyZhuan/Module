@@ -16,6 +16,8 @@ import crateCodeModule.com.common.http.HttpUtils;
 import crateCodeModule.com.galrami.classes.ProxyProductInfo;
 import crateCodeModule.com.galrami.util.FieldUtils;
 import crateCodeModule.com.galrami.util.JspFieldName;
+import crateCodeModule.com.wareHouses.classes.CustomerBalanceRecord;
+import crateCodeModule.com.wareHouses.classes.LogInfo;
 import crateCodeModule.com.wareHouses.classes.ProductCategory;
 
 @Service
@@ -44,12 +46,12 @@ public class CreateClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String className="productCategory"; //类名--英文--小写
-		String chineseName="产品分类信息";//
-		Class clazz=ProductCategory.class;// 实体类
-		String tableName="wr_product_category";
+		String className="customerBalanceRecord"; //类名--英文--小写
+		String chineseName="采购商余额信息";//
+		Class clazz=CustomerBalanceRecord.class;// 实体类
+		String tableName="customer_balance_record";
 		String CLASS=CommonUtils.getFirstUpWord(className);
-		int pid=21;//菜单的上一级目录
+		int pid=56;//菜单的上一级目录
 		prefix="";//例如 ： .app
 		prefixUrl="";  //例如：   app/
 		try {
@@ -60,9 +62,9 @@ public class CreateClass {
 //			createDomain(className, chineseName, clazz, tableName);
 			
 			//生成对应权限
-			//HttpUtils.sendGet("http://localhost:8080/WareHouses/data/addMenu?pid="+pid+"&name="+chineseName+"&className="+className, "UTF-8");
+//			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/addMenu?pid="+pid+"&name="+chineseName+"&className="+className, "UTF-8");
 			//生成对应表
-			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/createTable?className=com.wareHouses.business."+className+".domain."+CLASS, "UTF-8");
+			HttpUtils.sendGet("http://localhost:8080/WareHouses/data/createTable?className=com.Fee.business."+className+".domain."+CLASS, "UTF-8");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -144,7 +146,7 @@ public class CreateClass {
 		constractQueryMap(clazz);
 		String queryContent = createQueryContent();
 		String fieldContent = createFieldContent();
-		String url="${ctx}/mall/"+className+"/"+className+"List";
+		String url="${ctx}/wareHouses/"+className+"/"+className+"List";
 		String content = FileUtil.read(tempUrl+"Templete_List.txt",true);
 		content=content.replace("@query", queryContent).replace("@field", fieldContent).replace("@add", "wareHouses:"+className+":add")
 				.replace("@update", "wareHouses:"+className+":update").replace("@delete", "wareHouses:"+className+":delete")
@@ -173,7 +175,7 @@ public class CreateClass {
 			
 			JSONObject obj = entry.getValue();
 			int isSelect = obj.getIntValue("isSelect");
-			String str="\t<td><input name=\""+entry.getKey()+"\" type=\"text\" value=\"${"+className+"."+entry.getKey()+"}\" class=\"easyui-validatebox\" data-options=\"required:'required'\"/></td>\r\n";
+			String str="\t<td><input name=\""+entry.getKey()+"\" type=\"text\" value=\"${"+className+"."+entry.getKey()+"}\" class=\"easyui-validatebox\" /></td>\r\n";
 			if(isSelect==1){
 				str="\t<td>\r\n "+"<select name=\""+entry.getKey()+"\">\r\n<option value=\"\">请选择</option>\r\n</select>"+" \r\n</td>\r\n";
 			}
@@ -219,9 +221,9 @@ public class CreateClass {
 			 
 			 
 			 if(field.contains("name")){
-				 obj.put("queryType", FieldUtils.getQueryType(true,name,field));
+				 obj.put("queryType", FieldUtils.getCalCulateType(true)+"_"+field);
 			 }else{
-				 obj.put("queryType",  FieldUtils.getQueryType(false,name,field));
+				 obj.put("queryType",  FieldUtils.getCalCulateType(false)+"_"+field);
 			 }
 			 
 			 

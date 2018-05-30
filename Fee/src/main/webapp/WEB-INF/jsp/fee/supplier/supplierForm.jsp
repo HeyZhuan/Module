@@ -8,7 +8,7 @@
 </head>
 <body>
 <div>
-	<form id="mainform" action="${ctx}/wareHouses/supplier/${action}" method="post">
+	<form id="mainform" action="${ctx}/fee/supplier/${action}" method="post">
 		<table class="formTable">
 			<input name="id" type="hidden" value="${supplier.id}" class="easyui-validatebox"/>
 		<tr>
@@ -16,17 +16,21 @@
 			<td><input name="name" type="text" value="${supplier.name}" class="easyui-validatebox" data-options="required:'required'"/></td>
 		</tr>
 		<tr>
-			<td>供货商类型:	</td>
+			<td>供货商简称:	</td>
+			<td><input name="simpleName" type="text" value="${supplier.simpleName}" class="easyui-validatebox" data-options="required:'required'"/></td>
+		</tr>
+		<tr>
+			<td>状态:	</td>
 			<td>
-			 <select name="type" class="easyui-combobox" style="width:139px;">
-				<option value="0">经销商</option>
-				<option value="1">代理商</option>
+			 <select name="status">
+				<option value="0">冻结</option>
+				<option value="1">开通</option>
 			</select> 
 			</td>
 		</tr>
 		<tr>
 			<td>供货商余额:	</td>
-			<td><input name="balance" type="text" value="${supplier.balance}" class="easyui-validatebox"/></td>
+			<td><input name="balance" type="text" value="${supplier.balance}" class="easyui-validatebox" readonly="readonly"/></td>
 		</tr>
 		<tr>
 			<td>备注:	</td>
@@ -41,7 +45,7 @@
 	
 var action="${action}";
 if(action=='update'){
-	showValueByKey("${supplier.type}","type");
+	showValueByKey("${supplier.status}","status");
 }
 
 	//提交表单

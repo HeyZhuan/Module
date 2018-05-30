@@ -3,6 +3,9 @@ package com.Fee.system.user.domain;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
+import com.Fee.business.customer.domain.Customer;
+import com.Fee.common.time.TimeUtils;
+
 
 @Table("sys_user")
 public class User {
@@ -19,7 +22,30 @@ public class User {
 	private int addTime;
 	private String plainPassword;
 	private String remark;
+	private int type;//0 内部人员  1 采购商
 	
+	
+	public User(Customer customer) {
+		super();
+		this.name = customer.getName();
+		this.status = customer.getStatus();
+		this.account = customer.getLoginName();
+		this.email = customer.getEmail();
+		this.phone = customer.getPhone();
+		this.addTime = TimeUtils.getTimeStamp();
+		this.plainPassword =customer.getPassword();
+		this.type = 1;
+	}
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
 	public int getId() {
 		return id;
 	}

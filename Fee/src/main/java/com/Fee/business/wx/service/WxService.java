@@ -1,5 +1,8 @@
 package com.Fee.business.wx.service;
 
+import com.Fee.business.customerProduct.domain.CustomerProduct;
+import com.Fee.business.order.domain.Order;
+
 /**
  * 用于微信支付
  * @author Zhuan
@@ -14,7 +17,7 @@ public interface WxService {
 	 * @param body
 	 * @return 返回prepayId 
 	 */
-	public String pay(WxOrder order,WxProduct product);
+	public String pay(Order order,CustomerProduct product);
 	
 	/**
 	 * 退款申请提交接口
@@ -22,7 +25,7 @@ public interface WxService {
 	 * @param order
 	 * @return
 	 */
-	public boolean reFund(WxPublicConfig con,WxOrder order);
+	public boolean reFund(Order order);
 	
 	
 	/**
@@ -32,7 +35,7 @@ public interface WxService {
 	 * @param order
 	 * @return
 	 */
-	public String queryReFund(WxPublicConfig con,WxOrder order);
+	public String queryReFund(Order order);
 	
 	
 	/**

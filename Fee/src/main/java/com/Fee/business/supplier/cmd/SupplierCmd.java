@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.QueryResult;
@@ -25,14 +24,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.Fee.business.logInfo.service.LogInfoService;
 import com.Fee.business.supplier.domain.Supplier;
 import com.Fee.business.supplier.service.SupplierService;
-import com.Fee.common.enums.ContentTypeEnum;
-import com.Fee.common.enums.WorkTypeEnum;
+import com.Fee.common.cache.CmdCache;
 import com.Fee.common.param.ParamUtils;
 import com.Fee.common.service.BaseService;
 
 
 @Controller
-@RequestMapping("wareHouses/supplier")
+@RequestMapping("fee/supplier")
 public class SupplierCmd {
 	private static Logger log = LoggerFactory.getLogger(SupplierCmd.class);
 	
@@ -49,7 +47,7 @@ public class SupplierCmd {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String list() {
-		return "wareHouses/supplier/supplierList";
+		return "fee/supplier/supplierList";
 	}
 
 	/**
@@ -71,13 +69,13 @@ public class SupplierCmd {
 	 * 
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:supplier:add")
+	@RequiresPermissions("fee:supplier:add")
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		Supplier supplier = new Supplier();
 		model.addAttribute("supplier", supplier);
 		model.addAttribute("action", "create");
-		return "wareHouses/supplier/supplierForm";
+		return "fee/supplier/supplierForm";
 	}
 
 	/**
@@ -86,12 +84,12 @@ public class SupplierCmd {
 	 * @param supplier
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:supplier:add")
+	@RequiresPermissions("fee:supplier:add")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@Validated Supplier supplier) {
-		supplierService.addSupplier(supplier);
-		logService.addLog(WorkTypeEnum.ADD, ContentTypeEnum.SUPPLIER, supplier);
+		Supplier s = supplierService.addSupplier(supplier);
+		CmdCache.refreshCache(s);
 		return "success";
 	}
 
@@ -102,13 +100,13 @@ public class SupplierCmd {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:supplier:update")
+	@RequiresPermissions("fee:supplier:update")
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") Integer id, Model model) {
 		Supplier supplier = supplierService.getSupplier(id);
 		model.addAttribute("supplier", supplier);
 		model.addAttribute("action", "update");
-		return "wareHouses/supplier/supplierForm";
+		return "fee/supplier/supplierForm";
 	}
 
 	/**
@@ -118,12 +116,12 @@ public class SupplierCmd {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:supplier:update")
+	@RequiresPermissions("fee:supplier:update")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@ResponseBody
 	public String update(@Validated @ModelAttribute @RequestBody Supplier supplier) {
 		supplierService.updateSupplier(supplier);
-		logService.addLog(WorkTypeEnum.UPDATE, ContentTypeEnum.SUPPLIER, supplier);
+		CmdCache.refreshCache(supplier);
 		return "success";
 	}
 
@@ -133,17 +131,12 @@ public class SupplierCmd {
 	 * @param id
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:supplier:delete")
+	@RequiresPermissions("fee:supplier:delete")
 	@RequestMapping(value = "delete")
 	@ResponseBody
 	public String delete(String[] ids) {
-		for (String id : ids) {
-			if(StringUtils.endsWith("1", id)){
-				return "id 为1 的供货商为总公司的信息，不允许删除";
-			}
-		}
 		supplierService.deleteSupplier(ids);
-		logService.addLog(Supplier.class,WorkTypeEnum.DELETE, ContentTypeEnum.SUPPLIER, ids);
+		CmdCache.refreshCache(ids);
 		return "success";
 	}
 }

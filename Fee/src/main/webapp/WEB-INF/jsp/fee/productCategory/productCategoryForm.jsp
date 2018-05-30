@@ -8,30 +8,51 @@
 </head>
 <body>
 <div>
-	<form id="mainform" action="${ctx}/wareHouses/productInfo/${action}" method="post">
+	<form id="mainform" action="${ctx}/fee/productInfo/${action}" method="post">
 		<table class="formTable">
 			<input name="id" type="hidden" value="${productInfo.id}" class="easyui-validatebox"/>
 			<tr>
-				<td>货物名称:	</td>
+				<td>产品大类名称:	</td>
 				<td><input name="name" type="text" value="${productInfo.name}" class="easyui-validatebox" data-options="required:'required'"/></td>
 			</tr>
+			
 			<tr>
-				<td>所属分类:	</td>
+				<td>省份:	</td>
+				<td><input name="province" type="text" value="${productInfo.name}" class="easyui-validatebox" data-options="required:'required'"/></td>
+			</tr>
+			<tr>
+				<td>运营商:	</td>
 				<td>
-					 <select name="cateId" class="easyui-combobox" style="width:139px">
-						<option value="">请选择</option>
-			 			<c:forEach items="${applicationScope.sysParam.productCategoryMap}" var="cateMap" >
-			 				<option value="${cateMap.key}">${cateMap.value.name}</option>
-			 			</c:forEach>
-					</select> 
+					<select name='operator'>
+						<option value="移动">移动</option>
+						<option value="联通">联通</option>
+						<option value="电信">电信</option>
+					</select>
+				</td>
+			</tr>
+				<tr>
+				<td>使用区域:	</td>
+				<td>
+					<select name='area'>
+						<option value="0">本省</option>
+						<option value="1">全国</option>
+					</select>
 				</td>
 			</tr>
 			<tr>
-				<td>库存数量:	</td>
-				<td><input name="num" type="text" value="${productInfo.num}" class="easyui-validatebox"/></td>
+				<td>规格:	</td>
+				<td><input name="size" type="text" value="${productInfo.size}" class="easyui-validatebox" data-options="required:'required'"/>
+					<select name ="unit" style="width:10px;"> 
+						<option value="2">元</option>
+						<option value="0">M</option>
+						<option value="1">G</option>
+						
+					</select>
+				</td>
 			</tr>
+			
 			<tr>
-				<td>货物单价:	</td>
+				<td>标准价:	</td>
 				<td><input name="price" type="text" value="${productInfo.price}" class="easyui-validatebox"/></td>
 			</tr>
 			<tr>
@@ -47,7 +68,9 @@
 	
 var action="${action}";
 if(action=='update'){
-	showValueByKey("${productInfo.cateId}","cateId");
+	showValueByKey("${productInfo.area}","area");
+	showValueByKey("${productInfo.operator}","operator");
+	showValueByKey("${productInfo.unit}","unit");
 }
 	
 	//提交表单

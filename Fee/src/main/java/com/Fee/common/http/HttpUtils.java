@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class HttpUtils {
@@ -35,6 +36,28 @@ public class HttpUtils {
 		}
 		return sign;
 	}
+	
+	/**
+	 * 获取请求的参数信息
+	 * @param request
+	 * @return
+	 */
+	public static Map<String, Object> getReqParams(String reqParams) {
+		String[] arge = StringUtils.split(reqParams, "&");
+		if (arge.length > 0) {
+			Map<String, Object> map = new HashMap<>();
+			for (String str : arge) {
+				String[] param = StringUtils.split(str, "=");
+				if (param.length == 2) {
+					map.put(param[0], param[1]);
+				}
+			}
+			return map;
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * 获取请求的参数信息
 	 * @param request
@@ -97,7 +120,7 @@ public class HttpUtils {
         return null;
 	}
 	
-	public static String sendGet(String url,String encode) {
+	public static String sendGet(String url,Map<String, String> map) {
         String result = "";
         BufferedReader in = null;
         try {
@@ -106,14 +129,14 @@ public class HttpUtils {
             // 打开和URL之间的连接
             URLConnection connection = realUrl.openConnection();
             // 设置通用的请求属性
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            for (Map.Entry<String, String> entry: map.entrySet()) {
+            	connection.setRequestProperty(entry.getKey(), entry.getValue());
+			}
             // 建立实际的连接
             connection.connect();
             
             in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream(),encode));
+                    connection.getInputStream(),"GBK"));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
@@ -184,7 +207,8 @@ public class HttpUtils {
 		return result;
 	}
 	
-	public static String sendPostWeixin(String url, String param,String encode) {
+	
+	public static String sendPost(String url, String param,Map<String, String> map) {
 		PrintWriter out = null;
 		BufferedReader in = null;
 		String result = "";
@@ -193,8 +217,10 @@ public class HttpUtils {
 			// 打开和URL之间的连接
 			URLConnection conn = realUrl.openConnection();
 			// 设置通用的请求属性
-			conn.setRequestProperty("accept", "*/*");
-			conn.setRequestProperty("connection", "Keep-Alive");
+			for (Map.Entry<String, String> entry: map.entrySet()) {
+				conn.setRequestProperty(entry.getKey(), entry.getValue());
+			}
+			
 			// 发送POST请求必须设置如下两行
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
@@ -209,7 +235,7 @@ public class HttpUtils {
 			out.flush();
 			// 定义BufferedReader输入流来读取URL的响应
 			in = new BufferedReader(new InputStreamReader(
-					conn.getInputStream(), encode));
+					conn.getInputStream(), "GBK"));
 			String line;
 			while ((line = in.readLine()) != null) {
 				result += line;
@@ -232,124 +258,5 @@ public class HttpUtils {
 		}
 		return result;
 	}
-	
-	
-	 /**
-     * 向指定 URL 发送POST方法的请求
-     * 
-     * @param url
-     *            发送请求的 URL
-     * @param param
-     *            
-     * @return 所代表远程资源的响应结果
-     */
-    public static String sendPost(String url, String param,String sign,String token) {
-        PrintWriter out = null;
-        BufferedReader in = null;
-        String result = "";
-        try {
-            URL realUrl = new URL(url);
-            // 打开和URL之间的连接
-            URLConnection conn = realUrl.openConnection();
-            // 设置通用的请求属性
-            conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            conn.setRequestProperty("Sign", sign);
-            conn.setRequestProperty("Token", token);
-            
-            conn.setConnectTimeout(50000);
-            conn.setReadTimeout(50000);
-            // 发送POST请求必须设置如下两行
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            // 获取URLConnection对象对应的输出流
-            out = new PrintWriter(conn.getOutputStream());
-            // 发送请求参数
-            out.print(param);
-            // flush输出流的缓冲
-            out.flush();
-            // 定义BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result += line;
-            }
-        } catch (Exception e) {
-            System.out.println("发送 POST 请求出现异常！"+e);
-            e.printStackTrace();
-        }
-        //使用finally块来关闭输出流、输入流
-        finally{
-            try{
-                if(out!=null){
-                    out.close();
-                }
-                if(in!=null){
-                    in.close();
-                }
-            }
-            catch(IOException ex){
-            	/*log.error(ex.getMessage(),ex);*/
-            	throw new RuntimeException(ex);
-            }
-        }
-        return result;
-    }  
-	 
-    
-    /**
-     * 表单发送
-     */
-    public static String sendFormPost(String url, String param) {
-		PrintWriter out = null;
-		BufferedReader in = null;
-		String result = "";
-		try {
-			URL realUrl = new URL(url);
-			// 打开和URL之间的连接
-			URLConnection conn = realUrl.openConnection();
-			// 设置通用的请求属性
-			conn.setRequestProperty("accept", "*/*");
-			conn.setRequestProperty("connection", "Keep-Alive");
-			conn.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-			// 发送POST请求必须设置如下两行
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setReadTimeout(30000);
-			conn.setConnectTimeout(30000);
-			
-			// 获取URLConnection对象对应的输出流
-			out = new PrintWriter(conn.getOutputStream());
-			// 发送请求参数
-			out.print(param);
-			// flush输出流的缓冲
-			out.flush();
-			// 定义BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(
-					conn.getInputStream(), "UTF-8"));
-			String line;
-			while ((line = in.readLine()) != null) {
-				result += line;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// 使用finally块来关闭输出流、输入流
-		finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		return result;
-	}
+
 }

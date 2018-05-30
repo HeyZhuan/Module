@@ -18,7 +18,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.Fee.common.json.JsonUtils;
 
-@Configuration  
+/*@Configuration*/  
 public class SystemWebSocketHandler implements WebSocketHandler {  
        
     private Logger log = LoggerFactory.getLogger(SystemWebSocketHandler.class);  

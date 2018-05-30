@@ -11,7 +11,7 @@
 		<property name="cacheManager" ref="shiroEhcacheManager" />
 	</bean>
 	
-	<bean id="myCaptchaFilter" class="com.wareHouses.system.user.domain.FormAuthenticationCaptchaFilter"/>
+	<bean id="myCaptchaFilter" class="com.Fee.system.user.domain.FormAuthenticationCaptchaFilter"/>
 	
 	<!-- Shiro Filter -->
 	
@@ -26,6 +26,7 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
+				/wx/**=anon
 				/static/** = anon
 				${adminPath}/login = authc
 				${adminPath}/** = user 

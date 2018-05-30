@@ -1,4 +1,4 @@
-package com.Fee.business.productInfo.cmd;
+package com.Fee.business.productCategory.cmd;
 
 import java.util.Map;
 
@@ -22,8 +22,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.Fee.business.logInfo.service.LogInfoService;
-import com.Fee.business.productInfo.domain.ProductInfo;
-import com.Fee.business.productInfo.service.ProductInfoService;
+import com.Fee.business.productCategory.domain.ProductCategory;
+import com.Fee.business.productCategory.service.ProductCategoryService;
+import com.Fee.common.cache.CmdCache;
 import com.Fee.common.enums.ContentTypeEnum;
 import com.Fee.common.enums.WorkTypeEnum;
 import com.Fee.common.param.ParamUtils;
@@ -31,12 +32,12 @@ import com.Fee.common.service.BaseService;
 
 
 @Controller
-@RequestMapping("wareHouses/productInfo")
-public class ProductInfoCmd {
-	private static Logger log = LoggerFactory.getLogger(ProductInfoCmd.class);
+@RequestMapping("fee/productCategory")
+public class ProductCategoryCmd {
+	private static Logger log = LoggerFactory.getLogger(ProductCategoryCmd.class);
 	
 	@Autowired
-	private ProductInfoService productInfoService;
+	private ProductCategoryService productCategoryService;
 	
 	@Autowired
 	private BaseService baseService;
@@ -48,20 +49,20 @@ public class ProductInfoCmd {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String list() {
-		return "wareHouses/productInfo/productInfoList";
+		return "fee/productCategory/productCategoryList";
 	}
 
 	/**
 	 * 获取产品信息 数据
 	 */
-	@RequestMapping(value = "productInfoList", method = RequestMethod.GET)
+	@RequestMapping(value = "productCategoryList", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getData(HttpServletRequest request) {
 		Map<String, Object> filterParamMap = ParamUtils.getParametersStartingWith(request);
 		Cnd cnd = ParamUtils.getCnd(filterParamMap);
 		int[] param = ParamUtils.getPageParam(request);
 		Pager pager = baseService.creatPager(param[0], param[1]);
-		QueryResult result = baseService.get(ProductInfo.class, cnd, pager);
+		QueryResult result = baseService.get(ProductCategory.class, cnd, pager);
 		return ParamUtils.getEasyUIData(result);
 	}
 
@@ -70,27 +71,28 @@ public class ProductInfoCmd {
 	 * 
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:productInfo:add")
+	@RequiresPermissions("fee:productCategory:add")
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
-		ProductInfo productInfo = new ProductInfo();
-		model.addAttribute("productInfo", productInfo);
+		ProductCategory productCategory = new ProductCategory();
+		model.addAttribute("productCategory", productCategory);
 		model.addAttribute("action", "create");
-		return "wareHouses/productInfo/productInfoForm";
+		return "fee/productCategory/productCategoryForm";
 	}
 
 	/**
 	 * 添加产品信息
 	 * 
-	 * @param productInfo
+	 * @param productCategory
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:productInfo:add")
+	@RequiresPermissions("fee:productCategory:add")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@ResponseBody
-	public String create(@Validated ProductInfo productInfo) {
-		productInfoService.addProductInfo(productInfo);
-		logService.addLog(WorkTypeEnum.ADD, ContentTypeEnum.PRODUCT, productInfo);
+	public String create(@Validated ProductCategory productCategory) {
+		ProductCategory category = productCategoryService.addProductCategory(productCategory);
+		CmdCache.refreshCache(category);
+		logService.addLog(WorkTypeEnum.ADD, ContentTypeEnum.PRODUCT, productCategory);
 		return "success";
 	}
 
@@ -101,28 +103,29 @@ public class ProductInfoCmd {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:productInfo:update")
+	@RequiresPermissions("fee:productCategory:update")
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") Integer id, Model model) {
-		ProductInfo productInfo = productInfoService.getProductInfo(id);
-		model.addAttribute("productInfo", productInfo);
+		ProductCategory productCategory = productCategoryService.getProductCategory(id);
+		model.addAttribute("productCategory", productCategory);
 		model.addAttribute("action", "update");
-		return "wareHouses/productInfo/productInfoForm";
+		return "fee/productCategory/productCategoryForm";
 	}
 
 	/**
 	 * 修改产品信息
 	 * 
-	 * @param productInfo
+	 * @param productCategory
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:productInfo:update")
+	@RequiresPermissions("fee:productCategory:update")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@ResponseBody
-	public String update(@Validated @ModelAttribute @RequestBody ProductInfo productInfo) {
-		productInfoService.updateProductInfo(productInfo);
-		logService.addLog(WorkTypeEnum.UPDATE, ContentTypeEnum.PRODUCT, productInfo);
+	public String update(@Validated @ModelAttribute @RequestBody ProductCategory productCategory) {
+		productCategoryService.updateProductCategory(productCategory);
+		CmdCache.refreshCache(productCategory);
+		logService.addLog(WorkTypeEnum.UPDATE, ContentTypeEnum.PRODUCT, productCategory);
 		return "success";
 	}
 
@@ -132,12 +135,13 @@ public class ProductInfoCmd {
 	 * @param id
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:productInfo:delete")
+	@RequiresPermissions("fee:productCategory:delete")
 	@RequestMapping(value = "delete")
 	@ResponseBody
 	public String delete(String[] ids) {
-		productInfoService.deleteProductInfo(ids);
-		logService.addLog(ProductInfo.class,WorkTypeEnum.DELETE, ContentTypeEnum.CATE, ids);
+		productCategoryService.deleteProductCategory(ids);
+		CmdCache.refreshCache(ids);
+		logService.addLog(ProductCategory.class,WorkTypeEnum.DELETE, ContentTypeEnum.CATE, ids);
 		return "success";
 	}
 }

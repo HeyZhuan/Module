@@ -13,6 +13,7 @@
 			<tr>
 				<td>账号：</td>
 				<td>
+					<input type="hidden" name="type" value="0"/>
 					<input type="hidden" name="id" value="${user.id }"/>
 					<input type="hidden" name="addTime" value="${user.addTime }"/>
 					<input id="loginName" name="account" class="easyui-validatebox" data-options="width: 150,prompt: '请输入英文'" value="${user.account }"/> 

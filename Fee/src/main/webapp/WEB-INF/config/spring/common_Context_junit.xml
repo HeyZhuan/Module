@@ -15,27 +15,27 @@
 
 	<context:property-placeholder
 
-		location="file:src/main/webapp/WEB-INF/config/properties/db/setting.properties"/>
+		location="file:src/main/webapp/WEB-INF/config/properties/db/setting_t.properties"/>
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>file:src/main/webapp/WEB-INF/config/properties/db/setting</value>
+				<value>file:src/main/webapp/WEB-INF/config/properties/db/setting_t</value>
 			</list>
 		</property>
 		<property name="cacheSeconds" value="36000" />
 	</bean>
 	
-	<bean id="constants" class="com.wareHouses.common.resource.Constants">
+	<bean id="constants" class="com.Fee.common.resource.Constants">
 		<property name="messageSource" ref="messageSource" />
 	</bean>	 
 
 	<!-- 开启自动扫描 -->
 		<!-- 自动扫描且不扫描@Controller -->
 	<context:component-scan base-package="com">
-		<!-- <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/> -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
 	
  	<!-- database-->
@@ -201,7 +201,7 @@
 	</bean>
 
 	
-	<bean id="commonDAO" class="com.wareHouses.common.db.CommonDao">
+	<bean id="commonDAO" class="com.Fee.common.db.CommonDao">
 		<property name="dataSource" ref="dataSource"/>  
 	</bean>
 </beans>

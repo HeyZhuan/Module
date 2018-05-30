@@ -2,6 +2,7 @@ package com.Fee.business.supplier.service;
 
 import java.util.List;
 
+import com.Fee.business.order.domain.Order;
 import com.Fee.business.supplier.domain.Supplier;
 
 /**
@@ -20,4 +21,6 @@ public interface SupplierService {
    int deleteSupplier(String[] ids);
    
    List<Supplier> getAll();
+   
+   void consume(Order order);
 }

@@ -56,7 +56,7 @@ public class LogInfoServiceImpl implements LogInfoService{
 
 	@Override
 	public void addLog(WorkTypeEnum workType, ContentTypeEnum contentType, Object obj) {
-		try {
+		/*try {
 			
 			LogInfo log=new LogInfo();
 			log.setName(UserUtil.getUserName());
@@ -70,12 +70,12 @@ public class LogInfoServiceImpl implements LogInfoService{
 			commonDao.insert(log);
 		} catch (Exception e) {
 			LogUtils.sendExceptionLog(logger, "添加日志异常", e);
-		}
+		}*/
 	}
 	
 	@Override
 	public void addLog(WorkTypeEnum workType, ContentTypeEnum contentType, String remark,double price) {
-		try {
+		/*try {
 			
 			LogInfo log=new LogInfo();
 			log.setName(UserUtil.getUserName());
@@ -91,12 +91,12 @@ public class LogInfoServiceImpl implements LogInfoService{
 			commonDao.insert(log);
 		} catch (Exception e) {
 			LogUtils.sendExceptionLog(logger, "添加日志异常", e);
-		}
+		}*/
 	}
 
 	@Override
 	public void addLog(Class clazz,WorkTypeEnum workType, ContentTypeEnum contentType, String[] ids) {
-		try {
+		/*try {
 			
 			LogInfo log=new LogInfo();
 			log.setName(UserUtil.getUserName());
@@ -110,7 +110,7 @@ public class LogInfoServiceImpl implements LogInfoService{
 			commonDao.insert(log);
 		} catch (Exception e) {
 			LogUtils.sendExceptionLog(logger, "添加日志异常", e);
-		}
+		}*/
 		
 	}
 }

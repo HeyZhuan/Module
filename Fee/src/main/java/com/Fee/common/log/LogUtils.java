@@ -19,12 +19,33 @@ public class LogUtils {
 	}
 	
 	/**
+	 * 打印异常日志
+	 * @param log
+	 * @param id
+	 * @param e
+	 */
+	public static void sendExceptionLog(org.apache.log4j.Logger log,String id,Exception e){
+		log.info("------"+id+"-----发生异常:"+e.getMessage(),e);
+		log.error("------"+id+"-----发生异常:"+e.getMessage(),e);
+	}
+	
+	/**
 	 * 发送寻常日志
 	 * @param log
 	 * @param id
 	 * @param param
 	 */
 	public static void sendLog(Logger log,Object id,String param){
+		log.info("----"+JsonUtils.obj2Json(id)+"-----:   "+param);
+	}
+	
+	/**
+	 * 发送寻常日志
+	 * @param log
+	 * @param id
+	 * @param param
+	 */
+	public static void sendLog(org.apache.log4j.Logger log,Object id,String param){
 		log.info("----"+JsonUtils.obj2Json(id)+"-----:   "+param);
 	}
 }

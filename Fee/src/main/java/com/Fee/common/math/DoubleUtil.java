@@ -60,6 +60,19 @@ public class DoubleUtil {
 		BigDecimal bd2 = new BigDecimal(Double.toString(d2));
 		return bd1.multiply(bd2).doubleValue();
 	}
+	
+	/**
+	 * double 乘法
+	 * 
+	 * @param d1
+	 * @param d2
+	 * @return
+	 */
+	public static Double mul(double d1, String d2) {
+		BigDecimal bd1 = new BigDecimal(Double.toString(d1));
+		BigDecimal bd2 = new BigDecimal(d2);
+		return bd1.multiply(bd2).doubleValue();
+	}
 
 	/**
 	 * double 除法

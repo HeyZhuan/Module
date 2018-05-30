@@ -25,7 +25,7 @@
 		<property name="cacheSeconds" value="36000" />
 	</bean>
 	
-	<bean id="constants" class="com.wareHouses.common.resource.Constants">
+	<bean id="constants" class="com.Fee.common.resource.Constants">
 		<property name="messageSource" ref="messageSource" />
 	</bean>	 
 
@@ -201,7 +201,7 @@
 	</bean>
 
 	
-	<bean id="commonDAO" class="com.wareHouses.common.db.CommonDao">
+	<bean id="commonDAO" class="com.Fee.common.db.CommonDao">
 		<property name="dataSource" ref="dataSource"/>  
 	</bean>
 	

@@ -32,7 +32,7 @@ import org.nutz.dao.pager.Pager;
 
 
 @Controller
-@RequestMapping("wareHouses/logInfo")
+@RequestMapping("fee/logInfo")
 public class LogInfoCmd {
 	private static Logger log = LoggerFactory.getLogger(LogInfoCmd.class);
 	
@@ -47,7 +47,7 @@ public class LogInfoCmd {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String list() {
-		return "wareHouses/logInfo/logInfoList";
+		return "fee/logInfo/logInfoList";
 	}
 
 	/**
@@ -69,13 +69,13 @@ public class LogInfoCmd {
 	 * 
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:logInfo:add")
+	@RequiresPermissions("fee:logInfo:add")
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		LogInfo logInfo = new LogInfo();
 		model.addAttribute("logInfo", logInfo);
 		model.addAttribute("action", "create");
-		return "wareHouses/logInfo/logInfoForm";
+		return "fee/logInfo/logInfoForm";
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class LogInfoCmd {
 	 * @param logInfo
 	 * @param model
 	 */
-	@RequiresPermissions("wareHouses:logInfo:add")
+	@RequiresPermissions("fee:logInfo:add")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@Validated LogInfo logInfo) {
@@ -99,13 +99,13 @@ public class LogInfoCmd {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:logInfo:update")
+	@RequiresPermissions("fee:logInfo:update")
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") Integer id, Model model) {
 		LogInfo logInfo = logInfoService.getLogInfo(id);
 		model.addAttribute("logInfo", logInfo);
 		model.addAttribute("action", "update");
-		return "wareHouses/logInfo/logInfoForm";
+		return "fee/logInfo/logInfoForm";
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class LogInfoCmd {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:logInfo:update")
+	@RequiresPermissions("fee:logInfo:update")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@ResponseBody
 	public String update(@Validated @ModelAttribute @RequestBody LogInfo logInfo) {
@@ -129,7 +129,7 @@ public class LogInfoCmd {
 	 * @param id
 	 * @return
 	 */
-	@RequiresPermissions("wareHouses:logInfo:delete")
+	@RequiresPermissions("fee:logInfo:delete")
 	@RequestMapping(value = "delete")
 	@ResponseBody
 	public String delete(String[] ids) {

@@ -1,6 +1,6 @@
-package com.wareHouses.business.@class.service;
+package com.Fee.business.@class.service;
 
-import com.wareHouses.business.@class.domain.@CLASS;
+import com.Fee.business.@class.domain.@CLASS;
 
 /**
  *  @author zhuan

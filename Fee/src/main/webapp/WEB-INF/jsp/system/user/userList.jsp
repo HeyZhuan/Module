@@ -75,6 +75,17 @@ $(function(){
 				return returnVal;
 			}
         },
+        { field : 'type', title : '类型', sortable : true, width : 100 ,
+			formatter : function(value, row, index) {
+				var returnVal = value;
+				if (value == 1) {
+					returnVal = "<span style='color:red;font-weight:bold;'>采购商</span>";
+				} else if (value == 0) {
+					returnVal = "<span style='color:green;font-weight:bold;'>内部员工</span>";
+				}
+				return returnVal;
+			}
+        },
         {field:'email',title:'email',sortable:true,width:100},
         {field:'phone',title:'电话',sortable:true,width:100}
        

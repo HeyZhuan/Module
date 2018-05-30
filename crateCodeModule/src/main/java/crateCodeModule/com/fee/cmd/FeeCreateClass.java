@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import crateCodeModule.com.common.file.CommonUtils;
 import crateCodeModule.com.common.file.FileUtil;
 import crateCodeModule.com.fee.domain.Customer;
+import crateCodeModule.com.fee.domain.CustomerAudit;
 import crateCodeModule.com.fee.domain.CustomerProduct;
 import crateCodeModule.com.galrami.util.FieldUtils;
 import crateCodeModule.com.galrami.util.JspFieldName;
@@ -43,10 +44,10 @@ public class FeeCreateClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String className="customerProduct"; //类名--英文--小写
-		String chineseName="采购商产品信息";//
-		Class clazz=CustomerProduct.class;// 实体类
-		String tableName="fee_customer_product";
+		String className="customerChargeRecord"; //类名--英文--小写
+		String chineseName="采购商充值信息记录";//
+		Class clazz=CustomerAudit.class;// 实体类
+		String tableName="fee_customer_charge_record";
 		String CLASS=CommonUtils.getFirstUpWord(className);
 		int pid=56;//菜单的上一级目录
 		prefix="";//例如 ： .app

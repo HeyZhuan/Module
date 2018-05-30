@@ -1,5 +1,10 @@
 package com.Fee.business.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.Fee.business.productCategory.domain.ProductCategory;
 import com.Fee.common.db.CommonDao;
 import com.Fee.common.log.LogUtils;
 import com.Fee.common.service.BaseService;
@@ -32,6 +38,35 @@ public class FeeDataCmd {
 	@Autowired
 	private CommonDao dao;
 	
+	
+	/**
+	 * 删除菜单
+	 */
+	@RequestMapping(value = "work", method = RequestMethod.GET)
+	@ResponseBody
+	public void work() {
+		
+		//添加产品大类,慢充话费,10,50,100,500,1000
+		int[] sizes=new int[]{10,50,100,500,1000};
+		List<ProductCategory> cates=new ArrayList<>();
+		for (int i : sizes) {
+			
+			ProductCategory cate=new ProductCategory();
+			cate.setArea(1);
+			cate.setName("广东移动慢充"+i+"元");
+			cate.setProvince("广东");
+			cate.setOperator("移动");
+			cate.setSize(i);
+			cate.setUnit(2);
+			cate.setPrice(i);
+			cate.setType(2);
+			cates.add(cate);
+		}
+		
+		dao.fastInsert(cates);
+	
+	}
+	
 	/**
 	 * 添加菜单
 	 */
@@ -43,7 +78,7 @@ public class FeeDataCmd {
 		menu.setPid(pid);
 		menu.setName(name);
 		menu.setType(0);
-		menu.setUrl("wareHouses/"+className);
+		menu.setUrl("fee/"+className);
 		menu.setStatus(1);
 		menu.setAddTime(TimeUtils.getTimeStamp());
 		
@@ -59,20 +94,20 @@ public class FeeDataCmd {
 		m2.setPid(m1.getId());
 		m2.setName("添加");
 		m2.setType(1);
-		m2.setUrl("wareHouses:"+className+":add");
+		m2.setUrl("fee:"+className+":add");
 		m2.setStatus(1);
 		m2.setAddTime(TimeUtils.getTimeStamp());
 		Menu m2s = baseService.save(m2);
 		rm.setMenuId(m2s.getId());
 		baseService.save(rm);
 		
-		m2.setUrl("wareHouses:"+className+":update");
+		m2.setUrl("fee:"+className+":update");
 		m2.setName("修改");
 		m2s=baseService.save(m2);
 		rm.setMenuId(m2s.getId());
 		baseService.save(rm);
 		
-		m2.setUrl("wareHouses:"+className+":delete");
+		m2.setUrl("fee:"+className+":delete");
 		m2.setName("删除");
 		m2s=baseService.save(m2);
 		rm.setMenuId(m2s.getId());

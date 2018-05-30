@@ -10,20 +10,22 @@
 <div id="tb" style="padding:5px;height:auto">
         <div>
         	<form id="searchFrom" action="">
-        			<input type="text" name="EQ_id" class="easyui-validatebox"  value=""  data-options="prompt: 'id'"/>
-					<input type="text" name="LIKE_name" class="easyui-validatebox"  value=""  data-options="prompt: '货物名称'"/>
-					<input type="text" name="EQ_size" class="easyui-validatebox"  value=""  data-options="prompt: '规格'"/>
-					<select name="EQ_cateId" class="easyui-combobox" style="width:150px;">
-						<option value="">所属产品分类</option>
-						<c:forEach items="${applicationScope.sysParam.productCategoryMap}" var="productCategoryMap" >
-			 				<option value="${productCategoryMap.key}">${productCategoryMap.value.name}</option>
-			 			</c:forEach>
-					</select>
-					<!-- <select name='EQ_type' class="easyui-combobox" style="width:150px;">
-						<option value="">类型</option>
-						<option value="1">外墙</option>
-						<option value="0">内墙</option>
-					</select> -->
+       			<input type="text" name="EQ_id" class="easyui-validatebox"  value=""  data-options="prompt: 'id'"/>
+				<input type="text" name="LIKE_name" class="easyui-validatebox"  value=""  data-options="prompt: '产品大类名称'"/>
+				<input type="text" name="EQ_province" class="easyui-validatebox"  value=""  data-options="prompt: '省份'"/>
+				<select name='EQ_operator'>
+					<option value="">运营商</option>
+					<option value="移动">移动</option>
+					<option value="联通">联通</option>
+					<option value="电信">电信</option>
+				</select>
+				<select name='EQ_area'>
+					<option value="">使用区域</option>
+					<option value="0">本省</option>
+					<option value="1">全国</option>
+				</select>
+				<input type="text" name="EQ_size" class="easyui-validatebox"  value=""  data-options="prompt: '规格'"/>
+				<input type="text" name="EQ_unit" class="easyui-validatebox"  value=""  data-options="prompt: '单位'"/>
 
 				
 				<div style="height: 7px;"></div>
@@ -32,16 +34,16 @@
 				 <a href="javascript(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reset1()">重置</a>
 			</form>
 			
-	       <shiro:hasPermission name="wareHouses:productInfo:add"> 
-	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="create('${ctx}/wareHouses/productInfo/create','添加');">添加</a>
+	       <shiro:hasPermission name="fee:productCategory:add"> 
+	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="create('${ctx}/fee/productCategory/create','添加');">添加</a>
 	       		<span class="toolbar-item dialog-tool-separator"></span>
 	       </shiro:hasPermission>
-	       	<shiro:hasPermission name="wareHouses:productInfo:delete"> 
-	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-options="disabled:false" onclick="dels('${ctx}/wareHouses/productInfo/delete','删除')">删除</a>
+	       	<shiro:hasPermission name="fee:productCategory:delete"> 
+	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-options="disabled:false" onclick="dels('${ctx}/fee/productCategory/delete','删除')">删除</a>
 	        	<span class="toolbar-item dialog-tool-separator"></span>
 	       </shiro:hasPermission> 
-	        <shiro:hasPermission name="wareHouses:productInfo:update">
-	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update('${ctx}/wareHouses/productInfo/update','修改')">修改</a>
+	        <shiro:hasPermission name="fee:productCategory:update">
+	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update('${ctx}/fee/productCategory/update','修改')">修改</a>
 	            <span class="toolbar-item dialog-tool-separator"></span>
 	      </shiro:hasPermission>
         </div> 
@@ -56,7 +58,7 @@ var d;
 $(function(){   
 	dg=$('#dg').datagrid({    
 	method: "get",
-    url:'${ctx}/wareHouses/productInfo/productInfoList', 
+    url:'${ctx}/fee/productCategory/productCategoryList', 
     fit : true,
 	fitColumns : true,
 	border : false,
@@ -73,57 +75,28 @@ $(function(){
     columns:[[    
     	{ checkbox : true},
     	{ field : 'id', title : 'id',width:100},
-		{ field : 'name', title : '货物名称',width:100},
-		{field : 'cateId',title : '所属产品分类',width:100,formatter : function(value, row, index) {
-			var $map = ${applicationScope.sysParam.productCategoryMapJson};
-			var retrunVal = "";
-			$.each($map, function(key, val) {
-				if (key == value) {
-					retrunVal = val.name;
-					return;
-				}
-			});
-			return retrunVal;
+		{ field : 'name', title : '产品大类名称',width:100},
+		{ field : 'province', title : '省份'},
+		{field : 'operator',title : '运营商'},
+		{field : 'area',title : '使用区域',formatter : function(value, row, index) {
+			if(value==0){
+				return "本省";
+			}else if(value==1){
+				return "全国";
+			}
 		}},
-		{field : 'type',title : '类型',width:100,formatter : function(value, row, index) {
-			var $map = ${applicationScope.sysParam.productCategoryMapJson};
-			var retrunVal = "";
-			$.each($map, function(key, val) {
-				if (key == row.cateId) {
-					if(val.type==1){
-						retrunVal = "外墙";
-					}else if(val.type==0){
-						retrunVal = "内墙";
-					}
-					return;
-				}
-			});
-			return retrunVal;
+		{field : 'unit',title : '规格',formatter : function(value, row, index) {
+			
+			var size=row.size;
+			if(value==0){
+				return size+"M";
+			}else if (value==1){
+				return size+"G";
+			}else if(value==2){
+				return size+"元";
+			}
 		}},
-		{field : 'size',title : '产品规格',width:100,formatter : function(value, row, index) {
-			var $map = ${applicationScope.sysParam.productCategoryMapJson};
-			var retrunVal = "";
-			$.each($map, function(key, val) {
-				if (key == row.cateId) {
-					retrunVal = val.size;
-					return;
-				}
-			});
-			return retrunVal;
-		}},
-		{field : 'color',title : '色号',width:100,formatter : function(value, row, index) {
-			var $map = ${applicationScope.sysParam.productCategoryMapJson};
-			var retrunVal = "";
-			$.each($map, function(key, val) {
-				if (key == row.cateId) {
-					retrunVal = val.color;
-					return;
-				}
-			});
-			return retrunVal;
-		}},
-		{ field : 'num', title : '库存数量',width:100},
-		{ field : 'price', title : '货物单价',width:100},
+		{ field : 'price', title : '标准价',width:100},
 		{ field : 'remark', title : '备注',width:100},
 
        

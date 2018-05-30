@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+		<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+		<title>号码查询</title>
+		<!--<script src="./bootstrap/js/bootstrap.min.js"></script>-->
+		
+	<style type="text/css">
+		.head{
+			top: 5px;
+			width: 95%;
+			
+		}
+		.phone{
+			width: 100%;
+			border: 0;
+			height: 45px;
+			font-size: 18px;
+			color: 	black;
+			font-family: "微软雅黑";
+			font-weight:bold;
+			padding-left: 10px;
+			padding-right: 5px;
+		}
+		
+		.operator{
+			font-size: 14px;
+			color: 	#C0C0C0;
+			padding-left: 10px;
+			padding-bottom: 5px;
+			display: none;
+		}
+		
+		.xiahuaxian{
+			width: 100%;
+			border-top: 0;
+			border-left: 0;
+			border-right: 0;
+			height: 0px;
+			padding-top: 10px;
+		}
+		
+		.biaoge{
+			width: 95%;
+			border:1px solid red;
+			font-size: 16px;
+			color: 	black;
+			font-family: "微软雅黑";
+			font-weight:bold;
+			padding-left: 10px;
+			padding-right: 5px;
+			margin-top: 20px;
+		}
+		
+		.biaoge_table{
+			width:85%;
+			text-align:left;
+		}
+		
+	
+		.pagetips{
+			width: 100%;
+			padding-top: 20px;
+			font-family: "微软雅黑";
+			font-size: 14px;
+			color: 	red;
+			line-height:25px;
+			list-style-type:none;
+			
+		}
+		
+		.foot{
+			margin-top: 10px;
+		}
+		.footButton{
+			width: 100%;
+			background-color: white;
+			font-size: 16px;
+			color: 	#0099ff;
+			font-family: "微软雅黑";
+			border: 1px solid #0099ff;
+			border-radius:5px;
+			font-weight: bold;
+			height: 50px;
+		}
+		
+		
+		input::-webkit-input-placeholder { /* WebKit browsers */ 
+		font-size: 16px;
+		font-family: "微软雅黑";
+		}
+		
+	</style>
+	</head>
+	<body>
+		
+		<form>
+			<input type="hidden" id="openId"/>
+			
+			<div class="head">
+				<input type="tel" id="phone" class="phone" placeholder="请输入需要查询的号码"/>
+				<span class="operator">广东移动</span>
+				<input class="xiahuaxian"/>
+			</div>
+		</form>
+		
+		<div class="foot">
+			
+			<button class="footButton">
+				<a href="/" style="text-decoration:none;color:#0099ff;" onclick="query()">查询</a>
+			</button>
+			
+		</div>
+		
+		<div class="biaoge">
+		
+			<table id="ta" class="biaoge_table">
+				<tr>
+					<td>号码</td>
+					<td>状态</td>
+				</tr>
+				
+			</table>
+		</div>
+		
+	
+		
+		<!-- <div class="pagetips">
+			<ul style="list-style-type:none;padding-left: 10px;">
+				<li>话费充值温馨提示：</li>
+				<li>1、停机欠费不可充；充值成功后48小时（非工作日会顺延）内到账；请勿提交扣月租急单，可联系客服查单。</li>
+				<li>2、支持用户：广东移动用户</li>
+			</ul>
+		</div> -->
+
+	</body>
+	
+	
+	<script type="text/javascript">
+		
+		$(function(){
+			
+			//获取openId
+			var address=window.location.href;
+			var location=address.indexOf("&");
+			var openId=address.substring(location+1,address.length);
+			$("#openId").val(openId);
+		})
+		
+		function query(){
+			$.ajax({
+				type:"get",
+				url:"/wx/getOrder?phone="+$("#phone").val()+"&openId="+$("#openId").val(),
+				success:function(data){
+					
+					if(data!=""){
+					
+						var str='<tr>'+
+									'<td>号码</td>'+
+									'<td>状态</td>'+
+								'</tr>';
+						
+						$.each(data,function(k,v){
+							
+							var str+='<tr>'+
+										'<td>'+v.phone+'</td>'+
+										'<td>'+v.status+'</td>'+
+									'</tr>';
+							
+						});		
+						$("#ta").clear();
+						$("#ta").append(str);
+					}
+				},
+			});
+		}
+		
+
+	</script>
+	
+</html>

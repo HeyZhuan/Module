@@ -26,14 +26,17 @@ public class AjaxFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) servletRequestt;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-		// String currentURL = request.getRequestURI();//取得根目录所对应的绝对路径:
+		String currentURL = request.getRequestURI();//取得根目录所对应的绝对路径:
 		// String targetURL = currentURL.substring(currentURL.indexOf("/", 1), currentURL.length()); //截取到当前文件名用于比较
 		String ajaxSubmit = request.getHeader("X-Requested-With");
 		if (ajaxSubmit != null && ajaxSubmit.equals("XMLHttpRequest")) {
 			if (request.getSession(false) == null || request.getSession().getAttribute("user") == null) {
-				response.setHeader("sessionstatus", "timeout");
-				response.getWriter().print("sessionstatus");
-				return ;
+				
+				if(!currentURL.contains("data") && !currentURL.contains("wx")){
+					response.setHeader("sessionstatus", "timeout");
+					response.getWriter().print("sessionstatus");
+					return ;
+				}
 			}
 		}
 

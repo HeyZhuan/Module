@@ -1,23 +1,23 @@
-package com.Fee.business.productInfo.service;
+package com.Fee.business.productCategory.service;
 
 import java.util.List;
 
-import com.Fee.business.productInfo.domain.ProductInfo;
+import com.Fee.business.productCategory.domain.ProductCategory;
 
 /**
  *  @author zhuan
  */
-public interface ProductInfoService {
+public interface ProductCategoryService {
 
-   ProductInfo getProductInfo(int productInfoId);
+   ProductCategory getProductCategory(int productInfoId);
    
-   ProductInfo addProductInfo(ProductInfo productInfo);
+   ProductCategory addProductCategory(ProductCategory productInfo);
    
-   int updateProductInfo(ProductInfo productInfo);
+   int updateProductCategory(ProductCategory productInfo);
    
-   int deleteProductInfo(int id);
+   int deleteProductCategory(int id);
    
-   int deleteProductInfo(String[] ids);
+   int deleteProductCategory(String[] ids);
    
-   List<ProductInfo> getAll();
+   List<ProductCategory> getAll();
 }

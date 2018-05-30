@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="./jq1.11.3/jquery.min.js"></script>
+		<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+		<title>话费充值</title>
+		
+	<style type="text/css">
+		.head{
+			top: 5px;
+			width: 95%;
+			
+		}
+		.phone{
+			width: 100%;
+			border: 0;
+			height: 45px;
+			font-size: 18px;
+			color: 	black;
+			font-family: "微软雅黑";
+			font-weight:bold;
+			padding-left: 10px;
+			padding-right: 5px;
+		}
+		
+		.operator{
+			font-size: 14px;
+			color: 	#C0C0C0;
+			padding-left: 10px;
+			padding-bottom: 5px;
+			display: none;
+		}
+		
+		.xiahuaxian{
+			width: 100%;
+			border-top: 0;
+			border-left: 0;
+			border-right: 0;
+			height: 0px;
+			padding-top: 10px;
+		}
+		
+		.products_div{
+			display: flex;
+			display: -webkit-flex;
+			flex-wrap:wrap;
+			width: 100%;
+			padding-left: 10px;
+		}
+		
+		.product{
+			display: flex;
+			padding-right:10px;
+			padding-top: 10px;
+			width: 105px;
+			
+		}
+		
+		.butt{
+			flex:auto;
+			background-color: white;
+			font-size: 14px;
+			color: 	#0099ff;
+			font-family: "微软雅黑";
+			border: 1px solid #0099ff;
+			border-radius:5px;
+			font-weight: 300;
+		}
+		
+		.butt_font{
+			background-color: white;
+			font-size: 12px;
+			color: 	72 118 255;
+			font-weight: 100;
+		}
+		
+		.pagetips{
+			width: 100%;
+			padding-top: 15px;
+			font-family: "微软雅黑";
+			font-size: 14px;
+			color: 	black;
+			line-height:25px;
+			list-style-type:none;
+			
+		}
+		.tips{
+			color: 	red;
+			font-weight: bold
+		}
+		
+		.foot{
+			width: 100%;
+			position: absolute;
+			bottom: 20px;
+		}
+		.footButton{
+			width: 95%;
+			background-color: white;
+			font-size: 16px;
+			color: 	#0099ff;
+			font-family: "微软雅黑";
+			border: 1px solid #0099ff;
+			border-radius:5px;
+			font-weight: bold;
+			height: 50px;
+		}
+		
+		
+		input::-webkit-input-placeholder { /* WebKit browsers */ 
+		font-size: 16px;
+		font-family: "微软雅黑";
+		}
+		
+	</style>
+	</head>
+	<body>
+		
+		<form>
+			<input type="hidden" id="openId"/>
+			<input type="hidden" id="phoneResult"/>
+			
+			<div class="head">
+				<input type="tel" class="phone" placeholder="请输入广东移动手机号码"/>
+				<span class="operator">广东移动</span>
+				<input class="xiahuaxian" readonly="readonly"/>
+			</div>
+		</form>
+	<!--	<span>充话费</span>-->
+		<div class="products_div">
+			
+			
+		</div>
+		
+		<div class="pagetips">
+			<ul style="list-style-type:none;padding-left: 10px;">
+				<li>话费充值温馨提示：</li>
+				<li>1、<span class="tips">广东移动话费充值仅需88折</span>，可抵扣月租、通话费、短信费（部分增值性业务暂时不能抵扣，如彩铃服务等）</li>
+				<li>2、充值限制：特价优惠每月每个号码限充一次（当月多充充值失败率会较高）</li>
+				<li>3、到账时间：订单提交成功后将会在72小时内到账（非工作日到账时间会顺延，例如周五成功提交订单，到账时间最迟将会顺延到下周二），<span class="tips">建议当天中午12点前提交订单，最快会在次日早上到账。</span></li>
+			</ul>
+		</div>
+		
+		
+		<!--<ul class="tab">
+			<li class="cur"><a href="#">流量充值</a></li>
+			<li><a id="orderRecords" href="chargeOrder.html">充值记录</a></li>
+		</ul>-->
+
+		
+		<!-- <div class="foot">
+			
+			<button class="footButton">
+				<a href="/" style="text-decoration:none;color: 	#0099ff;">充值记录查询</a>
+			</button>
+			
+		</div> -->
+
+	</body>
+	
+	
+	<script type="text/javascript">
+		
+		$(function(){
+			//获取openId
+			var address=window.location.href;
+			var location=address.indexOf("?");
+			var str=address.substring(location+1,address.length);
+			var openIdLoc=str.indexOf("=");
+			var openId=str.substring(openIdLoc+1,openIdLoc.length);
+			
+			$("#openId").val(openId);
+			
+			//绑定手机校验事件
+			$(".phone").bind('input propertychange',function(){
+				
+				var val = $(this).val();
+				$(".operator").html("");
+				if(val.length==11){
+					
+					//异步校验手机号码的正确性
+					$.ajax({
+						type:"get",
+						url:"/wx/checkPhone?phone="+$(".phone").val(),
+						success:function(data){
+							
+							if(data=="success"){
+								$(".operator").text("广东 移动");
+								$(".operator").css("color","#C0C0C0");
+								$(".operator").show();
+								$("#phoneResult").val(1);//设置为可充值
+							}else{
+								$(".operator").text("该号码不为广东移动号码");
+								$(".operator").css("color","#FF4040");
+								$(".operator").show();
+								$("#phoneResult").val(0);//设置为不可充值
+							}
+							
+						},
+					});
+					
+					
+				}else{
+					$(".input-text").css("border-color","red");
+				}
+			});
+			
+			
+			//获取充值产品
+			getProducts();
+		})
+		
+		
+		function getProducts(){
+			$.ajax({
+				type:"get",
+				url:"/wx/getProduct",
+				data:{customerId:10000},
+				success:function(data){
+					if(data!=null &&data!=""){
+						$.each(data, function(key,value) {
+							
+							var str='<div class="product" data-productid='+value.id+'>'+
+										'<button class="butt">'+
+											'<span >'+value.price+'元</span><br />'+
+											'<span class="butt_font">售价:'+value.sells+'元</span>'+
+										'</button>'+
+									'</div>';
+							
+							
+							$(".products_div").append(str);
+							
+						});
+						//给产品设置支付事件
+						$(".product").on("click",function(){
+							
+							var phone=$(".phone").val();
+							if($(".phone").val()==undefined || $(".phone").val()==""){
+								alert("请先输入手机号码");
+								return;
+							}
+							
+							if($("#phoneResult").val()==0){
+								alert("请先输入广东移动手机号码");
+								$(".phone").val("");
+								$(".operator").html("");
+								return;
+							}
+							var productId=$(this).data("productid");
+							var openId=$("#openId").val();
+							$.getJSON('/wx/pay',{phone:phone,productId:productId,openId:openId},
+							function(data){
+								debugger;
+								var rs = data.result;				
+								wxPay(rs.appId, rs.timeStamp, rs.nonceStr, rs.package, rs.signType, rs.sign,openId,phone);
+							});
+						});
+					}
+					
+				},
+			});
+			
+		}
+		
+		function wxPay(appId,timeStamp,nonceStr,pckage,signType,paySign,openId,phone){
+			function onBridgeReady(){
+				   WeixinJSBridge.invoke(
+				       'getBrandWCPayRequest', {
+				           "appId" : appId, /* 微信支付，坑一 冒号是中文字符 */
+				           "timeStamp":timeStamp,
+				           "nonceStr": nonceStr,
+				           "package":pckage,
+				           "signType": signType,
+				           "paySign":paySign
+				       },
+				       function(res){
+				    	   debugger;
+				           if(res.err_msg == "get_brand_wcpay_request：ok" ) {
+				            	window.location.href="http://zhuansman.top/query?&openId="+openId+"&phone="+phone
+				           }else{
+				        	   alert("支付失败");
+				           }
+				       }
+				   ); 
+				} 
+			
+			 	if (typeof WeixinJSBridge == "undefined"){
+				   if( document.addEventListener ){
+				       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+				   }else if (document.attachEvent){
+				       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+				       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+				   }
+				}else{
+				   onBridgeReady();
+				} 
+		}
+	</script>
+	
+</html>

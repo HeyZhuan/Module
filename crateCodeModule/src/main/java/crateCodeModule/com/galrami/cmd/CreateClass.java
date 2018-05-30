@@ -13,9 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import crateCodeModule.com.common.file.CommonUtils;
 import crateCodeModule.com.common.file.FileUtil;
 import crateCodeModule.com.common.http.HttpUtils;
-import crateCodeModule.com.galrami.classes.AppUserScoreChangeRecord;
-import crateCodeModule.com.galrami.classes.ProxyInfo;
-import crateCodeModule.com.galrami.classes.ProxyProductInfo;
+import crateCodeModule.com.galrami.classes.ProxyInfoBalanceReord;
 import crateCodeModule.com.galrami.util.FieldUtils;
 import crateCodeModule.com.galrami.util.JspFieldName;
 
@@ -49,10 +47,10 @@ public class CreateClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String className="proxyProductInfo"; //类名--英文--小写
-		String chineseName="代理产品信息";//
-		Class clazz=ProxyProductInfo.class;// 实体类
-		int pid=590;//菜单的上一级目录
+		String className="proxyInfoBalanceReord"; //类名--英文--小写
+		String chineseName="代理消费记录信息";//
+		Class clazz=ProxyInfoBalanceReord.class;// 实体类
+		int pid=565;//菜单的上一级目录
 		prefix="";//例如 ： .app
 		prefixUrl="";  //例如：   app/
 		try {
@@ -129,7 +127,7 @@ public class CreateClass {
 		String fieldContent = createFieldContent();
 		String url="${ctx}/mall/"+className+"/"+className+"List";
 		String content = FileUtil.read(tempUrl+"Templete_List.txt",true);
-		content=content.replace("@query", queryContent).replace("@url", url).replace("@field", fieldContent).replace("@add", "mall:"+className+":add")
+		content=content.replace("@query", queryContent).replace("@URL", url).replace("@field", fieldContent).replace("@add", "mall:"+className+":add")
 				.replace("@update", "mall:"+className+":update").replace("@add", "mall:"+className+":delete")
 				.replace("@url_add", "mall/"+className+"/create").replace("@url_update", "mall/"+className+"/update").replace("@url_del", "mall/"+className+"/delete");
 		FileUtil.write(listUrl+prefix+className+"/"+className+"List.jsp", content);

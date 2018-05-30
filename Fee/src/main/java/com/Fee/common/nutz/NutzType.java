@@ -12,6 +12,10 @@ public enum NutzType {
 	 */
 	IN("in"),
 	/**
+	 * in
+	 */
+	NOTIN("not in"),
+	/**
 	 * <
 	 */
 	LT("<"),

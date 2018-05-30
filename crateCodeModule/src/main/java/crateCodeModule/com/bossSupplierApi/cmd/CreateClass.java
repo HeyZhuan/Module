@@ -12,25 +12,25 @@ import crateCodeModule.com.common.file.FileUtil;
 public class CreateClass {
 	
 	//要生成的service文件路径
-	private static final String serviceUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/java/xinxing/boss/supplier/supplierapi/phonetraffic/others/";
+	private static final String serviceUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/java/xinxing/boss/supplier/supplierapi/phonetraffic/others/";
 	//要生成的配置文件路径
-	private static final String propertiesUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/webapp/WEB-INF/config/properties/supplier/";
+	private static final String propertiesUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/webapp/WEB-INF/config/properties/supplier/";
 	//PhonetrafficSupplierServiceImpl 类路径
-	private static final String phoneTrafficSupplierUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/java/xinxing/boss/supplier/supplierapi/phonetraffic/service/PhonetrafficSupplierServiceImpl.java";
+	private static final String phoneTrafficSupplierUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/java/xinxing/boss/supplier/supplierapi/phonetraffic/service/PhonetrafficSupplierServiceImpl.java";
 	//回调 SupplierCallback 路径
-	private static final String supplierCallbackUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/java/xinxing/boss/supplier/api/callback/SupplierCallback.java";
+	private static final String supplierCallbackUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/java/xinxing/boss/supplier/api/callback/SupplierCallback.java";
 	//commonContext.xml 的路径
-	private static final String commonContextUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/webapp/WEB-INF/config/spring/common_Context.xml";
+	private static final String commonContextUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/webapp/WEB-INF/config/spring/common_Context.xml";
 	//service.xml 路径
-	private static final String serviceXmlUrl="F:/Eclipse_WorkSpace/BossSupplierApi Maven Webapp/src/main/webapp/WEB-INF/config/spring/service_Context.xml";
+	private static final String serviceXmlUrl="F:/Eclipse_WorkSpace/BossSupplierApi/src/main/webapp/WEB-INF/config/spring/service_Context.xml";
 	
 	//templete文件路径
 	private static final String tempUrl="F:/git_work/crateCodeModule/src/main/java/crateCodeModule/com/bossSupplierApi/templete/";
 	
 	
 	public static void main(String[] args) {
-		String className="szgzx"; //类名--英文--小写
-		String classNameChinese="深圳广众信";    //中文名
+		String className="yimei4"; //类名--英文--小写
+		String classNameChinese="亿美4";    //中文名
 		
 		try {
 			createService(className, classNameChinese);

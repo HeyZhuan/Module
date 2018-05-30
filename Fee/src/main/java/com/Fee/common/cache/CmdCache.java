@@ -13,11 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
-import com.Fee.business.productInfo.domain.ProductInfo;
+import com.Fee.business.customer.domain.Customer;
+import com.Fee.business.customerProduct.domain.CustomerProduct;
+import com.Fee.business.productCategory.domain.ProductCategory;
 import com.Fee.business.supplier.domain.Supplier;
+import com.Fee.business.supplierProduct.domain.SupplierProduct;
+import com.Fee.common.enums.WxConfigEnum;
 import com.Fee.common.json.JsonUtils;
 import com.Fee.common.log.LogUtils;
 import com.Fee.common.service.BaseService;
+
+import weixin.popular.client.LocalHttpClient;
+import weixin.popular.support.TokenManager;
 
 /**
  * 货物，产品分类，客户，供货商 缓存进applicationContext 中，以方便前台直接使用
@@ -35,12 +42,13 @@ public class CmdCache implements ServletContextAware{
 	@Autowired
 	private BaseService baseService;
 	
+	
 
 	@Override
 	public void setServletContext(ServletContext context) {
 		
 		webContext=context;
-		Class[] clazzs=new Class[]{ProductInfo.class,Supplier.class};
+		Class[] clazzs=new Class[]{Customer.class,Supplier.class,ProductCategory.class,CustomerProduct.class,SupplierProduct.class};
 		
 		try {
 			
@@ -61,9 +69,30 @@ public class CmdCache implements ServletContextAware{
 				sysParamMap.put(name+"MapJson", JsonUtils.obj2Json(map));
 			}
 			context.setAttribute("sysParam",sysParamMap );
+			log.info("----------------缓存初始化完成----------------");
+			
+			//初始化微信
+			initWx();
 		} catch (Exception e) {
 			log.info(e.getMessage(),e);
 		}
+	}
+	
+	
+	/**
+	 * 初始化微信相关内容
+	 * @param configs
+	 */
+	private void initWx(){
+		//初始化微信公众号 自动刷新Token 
+		TokenManager.setDaemon(false);
+			
+		//初始化Token,小程序不需初始化
+		TokenManager.init(WxConfigEnum.APP_ID.opt, WxConfigEnum.APP_SECRET.opt);
+		//初始化 退款证书地址
+		LocalHttpClient.initMchKeyStore(WxConfigEnum.MCH_ID.opt,WxConfigEnum.APP_CERT_ADRESS.opt);
+		log.info("----------------微信初始化完成----------------");
+			
 	}
 
 	/**
@@ -112,6 +141,43 @@ public class CmdCache implements ServletContextAware{
 			LogUtils.sendExceptionLog(log, "", e);
 		}
 		
+	}
+	
+	/**
+	 * 获取缓存数据
+	 * @param t 传一个对象进来
+	 * @return 
+	 */
+	public static <T> T getCache(int key,T t){
+		
+		try {
+			
+			String name=t.getClass().getSimpleName().substring(0,1).toLowerCase()+t.getClass().getSimpleName().substring(1);
+			Map<Integer,T> map = (Map) sysParamMap.get(name+"Map");
+			
+			return map.get(key);
+		} catch (Exception e) {
+			LogUtils.sendExceptionLog(log, "", e);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 获取缓存数据
+	 * @param t 传一个对象进来
+	 * @return 
+	 */
+	public static <T> Map<Integer,T> getCacheMap(String key,T t){
+		
+		try {
+			
+			return (Map)sysParamMap.get(key);
+		} catch (Exception e) {
+			LogUtils.sendExceptionLog(log, "", e);
+		}
+		
+		return null;
 	}
 	
 	

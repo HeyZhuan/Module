@@ -42,16 +42,16 @@
 				<span	class="toolbar-item dialog-tool-separator"></span>
 			</form>
 			
-	     <%--   <shiro:hasPermission name="wareHouses:logInfo:add"> 
-	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="create('wareHouses/logInfo/create','添加');">添加</a>
+	     <%--   <shiro:hasPermission name="fee:logInfo:add"> 
+	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="create('fee/logInfo/create','添加');">添加</a>
 	       		<span class="toolbar-item dialog-tool-separator"></span>
 	       </shiro:hasPermission>
-	       	<shiro:hasPermission name="wareHouses:logInfo:delete"> 
-	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-options="disabled:false" onclick="dels('wareHouses/logInfo/delete','删除')">删除</a>
+	       	<shiro:hasPermission name="fee:logInfo:delete"> 
+	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-options="disabled:false" onclick="dels('fee/logInfo/delete','删除')">删除</a>
 	        	<span class="toolbar-item dialog-tool-separator"></span>
 	       </shiro:hasPermission> 
-	        <shiro:hasPermission name="wareHouses:logInfo:update">
-	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update('wareHouses/logInfo/update','修改')">修改</a>
+	        <shiro:hasPermission name="fee:logInfo:update">
+	            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update('fee/logInfo/update','修改')">修改</a>
 	            <span class="toolbar-item dialog-tool-separator"></span>
 	      </shiro:hasPermission> --%>
         </div> 
@@ -66,7 +66,7 @@ var d;
 $(function(){   
 	dg=$('#dg').datagrid({    
 	method: "get",
-    url:'${ctx}/wareHouses/logInfo/logInfoList', 
+    url:'${ctx}/fee/logInfo/logInfoList', 
     fit : true,
 	fitColumns : false,
 	border : false,

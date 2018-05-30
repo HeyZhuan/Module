@@ -57,7 +57,8 @@ $(function(){
 	singleSelect:false,
 	sortName:"id",
 	sortOrder: "desc",
-    columns:[[    
+    columns:[[
+    	{ checkbox : true},    
     	@field
        
     ]],
